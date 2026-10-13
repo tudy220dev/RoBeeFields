@@ -1,13 +1,14 @@
 # RoBee Fields
 
 
-A software project developed for university purposes for the digital management of apiaries and bee colonies in field conditions (offline-first). The application is intended for beekeepers operating in isolated areas without stable GSM coverage.
+A software project developed by two students from the Transilvania University of Brașov (UNITBV) for the digital management of apiaries and bee colonies in field conditions (offline-first). The application is intended for beekeepers operating in isolated areas without stable GSM coverage.
 
 
 # Project Description
 
 
 The mobile application provides a Jetpack Compose-based interface for viewing topographic maps and precise GPS localization of apiaries. The system enables hierarchical data organization, ensuring the individual identification of each hive through names or unique IDs assigned in the field.
+
 
 # Main Features
 
@@ -19,6 +20,7 @@ Apiary management: Recording and associating geographic coordinates for location
 Alternative reporting system: Generating textual data packages for sending coordinates and apiary status via SMS in areas lacking data signal.
 
 Data persistence: Local storage optimized to ensure the retention of records made during field sessions.
+
 
 # Tech Stack
 
