@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+
+    <!-- Entire Viewport Full-Screen Topographic Land Surface -->
+    <path
+        android:fillColor="#E6E0D4"
+        android:pathData="M0,0h1000v1000h-1000z" />
+
+    <!-- Topographic Relief / Elevation Variations Across Whole Country -->
+    <path
+        android:fillColor="#D2E3C8"
+        android:pathData="M0,0 H1000 V400 C800,500 600,300 400,600 C200,500 100,700 0,600 Z" />
+    <path
+        android:fillColor="#B7D3A6"
+        android:pathData="M200,100 C400,50 700,150 900,200 C800,450 500,550 300,400 Z" />
+
+    <!-- Carpathian Mountain Arc High Terrain -->
+    <path
+        android:fillColor="#C8B295"
+        android:strokeColor="#A1887F"
+        android:strokeWidth="2"
+        android:pathData="M350,150 C500,180 650,300 700,500 C600,650 450,550 380,480 C400,380 420,280 350,150 Z" />
+
+    <!-- Danube River & Major Waterways Across Viewport -->
+    <path
+        android:strokeColor="#42A5F5"
+        android:strokeWidth="6"
+        android:pathData="M0,850 C250,880 500,920 750,850 C850,800 900,700 1000,650" />
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="4"
+        android:pathData="M750,0 C780,200 820,400 850,650" />
+
+    <!-- MGRS / Coordinate Grid Overlay Covering 100% of Screen -->
+    <path
+        android:strokeColor="#8D6E63"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.35"
+        android:pathData="M100,0v1000 M200,0v1000 M300,0v1000 M400,0v1000 M500,0v1000 M600,0v1000 M700,0v1000 M800,0v1000 M900,0v1000 M0,100h1000 M0,200h1000 M0,300h1000 M0,400h1000 M0,500h1000 M0,600h1000 M0,700h1000 M0,800h1000 M0,900h1000" />
+
+</vector>

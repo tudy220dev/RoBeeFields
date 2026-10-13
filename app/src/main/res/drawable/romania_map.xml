@@ -1,0 +1,50 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+
+    <!-- Land Base Surface (Realistic Topographic Cream/Tan) -->
+    <path
+        android:fillColor="#EAE5D9"
+        android:pathData="M0,0h1000v1000h-1000z" />
+
+    <!-- Forest & Vegetation Areas (Realistic Natural Green Shading) -->
+    <path
+        android:fillColor="#C1D7AE"
+        android:pathData="M50,80 C200,30 450,120 700,60 C850,200 950,450 750,600 C550,750 250,850 50,700 Z" />
+    <path
+        android:fillColor="#A2C597"
+        android:pathData="M200,150 C400,100 650,200 800,350 C700,550 450,600 300,480 Z" />
+
+    <!-- Carpathian Mountain Arc High Terrain (Rich Topographic Elevation Brown) -->
+    <path
+        android:fillColor="#C0A080"
+        android:strokeColor="#8D6E63"
+        android:strokeWidth="1.5"
+        android:pathData="M380,180 C500,220 620,320 680,480 C580,600 450,520 380,450 C400,360 410,270 380,180 Z" />
+
+    <!-- Water Bodies & Danube River (Dunărea) -->
+    <path
+        android:strokeColor="#4A90E2"
+        android:strokeWidth="7"
+        android:pathData="M0,850 C250,880 500,920 750,850 C850,800 900,700 1000,650" />
+    <path
+        android:strokeColor="#5C9CE6"
+        android:strokeWidth="4"
+        android:pathData="M750,0 C780,200 820,400 850,650" />
+
+    <!-- Main European Access Roads & Field Highways -->
+    <path
+        android:strokeColor="#E67E22"
+        android:strokeWidth="3"
+        android:pathData="M0,250 C300,300 550,400 1000,350 M550,0 C560,350 580,700 600,1000 M0,600 L1000,600 M350,0 L350,1000" />
+
+    <!-- Major Cities & Regional Landmarks Overlay -->
+    <path android:fillColor="#2C3E50" android:pathData="M560,370 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    <path android:fillColor="#C0392B" android:pathData="M610,610 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0" />
+    <path android:fillColor="#2C3E50" android:pathData="M350,240 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    <path android:fillColor="#2C3E50" android:pathData="M110,410 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+    <path android:fillColor="#2C3E50" android:pathData="M780,180 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0" />
+
+</vector>

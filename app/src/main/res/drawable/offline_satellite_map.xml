@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="1000"
+    android:viewportHeight="1000">
+
+    <!-- Full-Screen Dark Satellite Vegetation Base Surface -->
+    <path
+        android:fillColor="#1E3318"
+        android:pathData="M0,0h1000v1000h-1000z" />
+
+    <!-- Forests & High Resolution Canopy Regions -->
+    <path
+        android:fillColor="#2A4722"
+        android:pathData="M0,0 H1000 V500 C800,600 600,400 400,700 C200,600 100,800 0,700 Z" />
+    <path
+        android:fillColor="#3D6331"
+        android:pathData="M150,100 C350,50 650,150 850,200 C750,450 450,550 250,400 Z" />
+
+    <!-- Mountain Ranges & Ridge Tops -->
+    <path
+        android:fillColor="#4E342E"
+        android:strokeColor="#6D4C41"
+        android:strokeWidth="2"
+        android:pathData="M350,150 C500,180 650,300 700,500 C600,650 450,550 380,480 C400,380 420,280 350,150 Z" />
+
+    <!-- Satellite Rivers & Lakes -->
+    <path
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="6"
+        android:pathData="M0,850 C250,880 500,920 750,850 C850,800 900,700 1000,650" />
+    <path
+        android:strokeColor="#2196F3"
+        android:strokeWidth="4"
+        android:pathData="M750,0 C780,200 820,400 850,650" />
+
+    <!-- Grid Lines Overlay -->
+    <path
+        android:strokeColor="#546E7A"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.3"
+        android:pathData="M100,0v1000 M200,0v1000 M300,0v1000 M400,0v1000 M500,0v1000 M600,0v1000 M700,0v1000 M800,0v1000 M900,0v1000 M0,100h1000 M0,200h1000 M0,300h1000 M0,400h1000 M0,500h1000 M0,600h1000 M0,700h1000 M0,800h1000 M0,900h1000" />
+
+</vector>
