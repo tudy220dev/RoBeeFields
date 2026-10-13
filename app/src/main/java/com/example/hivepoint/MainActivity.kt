@@ -39,6 +39,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -96,13 +97,13 @@ private const val PREF_LANG = "pref_lang"
 private const val BROWSER_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
 
 private fun isLocationInRomania(lat: Double, lon: Double): Boolean {
-    return lat in 43.6..48.3 && lon in 20.2..29.7
+    return (lat in 43.6..48.3) && (lon in 20.2..29.7)
 }
 
 class MainActivity : ComponentActivity() {
 
     private val sharedPreferences by lazy {
-        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     }
 
     private val dbHelper by lazy {
@@ -120,7 +121,7 @@ class MainActivity : ComponentActivity() {
                 latitude = 45.6579,
                 longitude = 25.6012,
                 status = HiveStatus.STRONG,
-                notes = "Stupină montană, cules brad"
+                notes = "Stupină montană, cules brad",
             ),
             Beehive(
                 id = "hive-bucuresti",
@@ -129,7 +130,7 @@ class MainActivity : ComponentActivity() {
                 latitude = 44.4322,
                 longitude = 26.1062,
                 status = HiveStatus.MEDIUM,
-                notes = "Stupină câmpie, tei"
+                notes = "Stupină câmpie, tei",
             ),
             Beehive(
                 id = "hive-cluj",
@@ -138,7 +139,7 @@ class MainActivity : ComponentActivity() {
                 latitude = 46.7712,
                 longitude = 23.6236,
                 status = HiveStatus.STRONG,
-                notes = "Familie foarte activă"
+                notes = "Familie foarte activă",
             )
         )
     )
@@ -163,7 +164,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val config = org.osmdroid.config.Configuration.getInstance()
-        config.load(applicationContext, applicationContext.getSharedPreferences("osmdroid_prefs", Context.MODE_PRIVATE))
+        config.load(applicationContext, applicationContext.getSharedPreferences("osmdroid_prefs", MODE_PRIVATE))
         config.userAgentValue = BROWSER_USER_AGENT
 
         val basePath = File(cacheDir, "osmdroid")
@@ -326,18 +327,6 @@ fun HivePointApp(
                 isDarkTheme = isDarkTheme,
                 selectedLanguage = selectedLanguage,
                 onOpenDrawer = { toggleDrawerAction() },
-                onAddHiveAtCurrentGps = { lat, lon ->
-                    val newCount = hives.size + 1
-                    val newHive = Beehive(
-                        apiaryId = "apiary-01",
-                        hiveNumber = "Stup #$newCount (GPS)",
-                        latitude = lat,
-                        longitude = lon,
-                        status = HiveStatus.STRONG,
-                        notes = "Marcat automat la coordonatele GPS curente"
-                    )
-                    onAddHive(newHive)
-                },
                 onUpdateHive = onUpdateHive,
                 onDeleteHive = onDeleteHive,
                 onAddHive = onAddHive
@@ -375,7 +364,6 @@ fun MapScreenWithDrawer(
     isDarkTheme: Boolean,
     selectedLanguage: String,
     onOpenDrawer: () -> Unit,
-    onAddHiveAtCurrentGps: (latitude: Double, longitude: Double) -> Unit,
     onUpdateHive: (Beehive) -> Unit,
     onDeleteHive: (String) -> Unit,
     onAddHive: (Beehive) -> Unit
@@ -699,7 +687,7 @@ fun AddElementAtCoordsDialog(
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedStatus) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .menuAnchor()
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                         )
                         ExposedDropdownMenu(
                             expanded = expandedStatus,
