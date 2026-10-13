@@ -4,13 +4,13 @@
 A software project developed by two students from the Transilvania University of Brașov (UNITBV) for the digital management of apiaries and bee colonies in field conditions (offline-first). The application is intended for beekeepers operating in isolated areas without stable GSM coverage.
 
 
-# Project Description
+# Project Description :
 
 
 The mobile application provides a Jetpack Compose-based interface for viewing topographic maps and precise GPS localization of apiaries. The system enables hierarchical data organization, ensuring the individual identification of each hive through names or unique IDs assigned in the field.
 
 
-# Main Features
+# Main Features :
 
 
 Offline cartographic visualization: Rendering of maps and orthophotos directly on the device without depending on an active internet connection.
@@ -22,7 +22,7 @@ Alternative reporting system: Generating textual data packages for sending coord
 Data persistence: Local storage optimized to ensure the retention of records made during field sessions.
 
 
-# Tech Stack
+# Tech Stack :
 
 
 Language: Kotlin/Java
