@@ -1,34 +1,34 @@
 # RoBee Fields
 
 
-Proiect software dezvoltat în cadrul facultății pentru gestionarea digitală a stupinelor și a coloniilor de albine în regim de teren (offline-first). Aplicația este destinată apicultorilor care își desfășoară activitatea în zone izolate, fără acoperire GSM stabilă.
+A software project developed for university purposes for the digital management of apiaries and bee colonies in field conditions (offline-first). The application is intended for beekeepers operating in isolated areas without stable GSM coverage.
 
 
-# Descrierea Proiectului
+# Project Description
 
 
-Aplicația mobilă oferă o interfață bazată pe Jetpack Compose pentru vizualizarea hărților topografice și localizarea precisă prin GPS a stupinelor. Sistemul permite organizarea ierarhică a datelor, asigurând identificarea individuală a fiecărui stup prin nume sau ID-uri unice atribuite în teren.
+The mobile application provides a Jetpack Compose-based interface for viewing topographic maps and precise GPS localization of apiaries. The system enables hierarchical data organization, ensuring the individual identification of each hive through names or unique IDs assigned in the field.
 
 
-#Funcționalități principale
+# Main Features
 
 
-Vizualizare cartografică offline: Randarea hărților și a ortofotografiilor direct pe dispozitiv, fără a depinde de o conexiune activă la internet.
+Offline cartographic visualization: Rendering of maps and orthophotos directly on the device without depending on an active internet connection.
 
-Managementul stupinelor: Înregistrarea și asocierea de coordonate geografice pentru locații, alături de identificarea individuală a stupilor.
+Apiary management: Recording and associating geographic coordinates for locations, along with the individual identification of hives.
 
-Sistem de raportare alternativ: Generarea de pachete de date textuale pentru trimiterea coordonatelor și a stării stupinelor prin SMS în zonele fără semnal de date.
+Alternative reporting system: Generating textual data packages for sending coordinates and apiary status via SMS in areas lacking data signal.
 
-Persistența datelor: Stocare locală optimizată pentru a asigura păstrarea înregistrărilor realizate în timpul sesiunilor pe teren.
+Data persistence: Local storage optimized to ensure the retention of records made during field sessions.
 
 
+# Tech Stack
 
-# Stack tehnologic
 
-Limbaj: Kotlin
+Language: Kotlin
 
-Interfață grafică: Jetpack Compose (Material 3)
+UI Framework: Jetpack Compose (Material 3)
 
-Stocare: Bază de date locală (Room / SQLite)
+Storage: Local database (Room / SQLite)
 
-Mediu de dezvoltare: Android Studio
+Development Environment: Android Studio
