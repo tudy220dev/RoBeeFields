@@ -25,7 +25,7 @@ Data persistence: Local storage optimized to ensure the retention of records mad
 # Tech Stack
 
 
-Language: Kotlin
+Language: Kotlin/Java
 
 UI Framework: Jetpack Compose (Material 3)
 
