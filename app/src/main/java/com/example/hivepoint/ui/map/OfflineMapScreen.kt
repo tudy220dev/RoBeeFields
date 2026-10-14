@@ -42,7 +42,6 @@ private const val BRASOV_LAT = 45.65737
 private const val BRASOV_LON = 25.60589
 private const val BROWSER_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
 
-// Esri World Topo Map (100% Free, ZERO API Key Required)
 private val ESRI_WORLD_TOPO = object : OnlineTileSourceBase(
     "Esri_World_Topo",
     0, 19, 256, ".jpg",
@@ -53,7 +52,6 @@ private val ESRI_WORLD_TOPO = object : OnlineTileSourceBase(
     }
 }
 
-// Esri World Imagery Satellite (100% Free, ZERO API Key Required)
 private val ESRI_SATELLITE = object : OnlineTileSourceBase(
     "Esri_Satellite",
     0, 19, 256, ".jpg",
@@ -64,7 +62,6 @@ private val ESRI_SATELLITE = object : OnlineTileSourceBase(
     }
 }
 
-// OpenStreetMap HOT (100% Free, ZERO API Key Required)
 private val OSM_HOT = object : OnlineTileSourceBase(
     "OSM_HOT",
     0, 19, 256, ".png",
@@ -102,7 +99,6 @@ fun OfflineMapScreen(
         MarkerIconHelper.createGoogleBlueDotDrawable(context)
     }
 
-    // Initialize real GIS MapView with Esri World Topo (100% Free, Zero API Key Needed)
     val mapView = remember {
         val config = Configuration.getInstance()
         config.load(context, context.getSharedPreferences("osmdroid_prefs", Context.MODE_PRIVATE))
@@ -140,7 +136,6 @@ fun OfflineMapScreen(
                     map.setTileSource(selectedTileSource)
                 }
 
-                // Apply dark filter ONLY when Dark Theme or Tactical mode is on AND map is NOT in Satellite mode
                 if ((isDarkTheme || mapType == MapType.TACTICAL) && mapType != MapType.SATELLITE) {
                     map.overlayManager.tilesOverlay.setColorFilter(TACTICAL_DARK_FILTER)
                 } else {
@@ -149,7 +144,6 @@ fun OfflineMapScreen(
 
                 map.overlays.clear()
 
-                // Long Press Event Overlay for adding beehives on long press
                 val mapEventsReceiver = object : MapEventsReceiver {
                     override fun singleTapConfirmedHelper(p: GeoPoint): Boolean = false
                     override fun longPressHelper(p: GeoPoint): Boolean {
@@ -159,7 +153,6 @@ fun OfflineMapScreen(
                 }
                 map.overlays.add(MapEventsOverlay(mapEventsReceiver))
 
-                // 1. Render Google Maps style Blue Dot for Live User Location
                 if (userLocation != null) {
                     val (userLat, userLon) = userLocation
                     val userMarker = Marker(map).apply {
@@ -172,7 +165,6 @@ fun OfflineMapScreen(
                     map.overlays.add(userMarker)
                 }
 
-                // 2. Render Beehive Markers & Apiary Markers
                 val topLevelMarkers = hives.filter { hive ->
                     val isApiary = hive.apiaryId == "apiary_complex" || hive.hiveNumber.startsWith("🏠")
                     val isStandaloneHive = hive.apiaryId == "apiary-01" || hive.apiaryId.isBlank()
@@ -217,7 +209,6 @@ fun OfflineMapScreen(
             }
         )
 
-        // Stacked Control FABs for Field Navigation (Top Right)
         Column(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -225,7 +216,6 @@ fun OfflineMapScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.End
         ) {
-            // Button 1: Zoom In (+)
             FloatingActionButton(
                 onClick = { mapView.controller.zoomIn() },
                 containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
@@ -238,7 +228,6 @@ fun OfflineMapScreen(
                 )
             }
 
-            // Button 2: Zoom Out (-)
             FloatingActionButton(
                 onClick = { mapView.controller.zoomOut() },
                 containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
@@ -251,7 +240,6 @@ fun OfflineMapScreen(
                 )
             }
 
-            // Button 3: Center on Live GPS Location
             FloatingActionButton(
                 onClick = {
                     if (userLocation != null) {
@@ -272,7 +260,6 @@ fun OfflineMapScreen(
                 )
             }
 
-            // Button 4: Overview of Romania
             FloatingActionButton(
                 onClick = {
                     mapView.controller.animateTo(GeoPoint(BRASOV_LAT, BRASOV_LON))

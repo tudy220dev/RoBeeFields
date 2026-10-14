@@ -13,6 +13,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 object MapCacheManager {
 
@@ -33,6 +35,77 @@ object MapCacheManager {
     fun isMapCached(context: Context, mapType: MapType): Boolean {
         val file = getCachedMapFile(context, mapType)
         return file.exists() && file.length() > 0
+    }
+
+    fun getMapsforgeFile(context: Context, regionName: String = "romania"): File {
+        val dir = File(context.filesDir, "mapsforge")
+        if (!dir.exists()) dir.mkdirs()
+        return File(dir, "$regionName.map")
+    }
+
+    fun isMapsforgeDownloaded(context: Context, regionName: String = "romania"): Boolean {
+        val file = getMapsforgeFile(context, regionName)
+        return file.exists() && file.length() > 1000
+    }
+
+    fun deleteMapsforgeMap(context: Context, regionName: String = "romania"): Boolean {
+        val file = getMapsforgeFile(context, regionName)
+        return if (file.exists()) file.delete() else false
+    }
+
+    suspend fun downloadMapsforgeVectorMap(
+        context: Context,
+        regionName: String = "romania",
+        downloadUrl: String = "https://download.mapsforge.org/maps/v5/europe/romania.map",
+        onProgress: (Float) -> Unit,
+        onComplete: (Boolean) -> Unit
+    ) {
+        withContext(Dispatchers.IO) {
+            try {
+                if (!isNetworkAvailable(context)) {
+                    withContext(Dispatchers.Main) { onComplete(false) }
+                    return@withContext
+                }
+
+                val targetFile = getMapsforgeFile(context, regionName)
+                val tempFile = File(targetFile.parentFile, "$regionName.tmp")
+
+                val url = URL(downloadUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.connectTimeout = 15000
+                connection.readTimeout = 15000
+                connection.connect()
+
+                val totalSize = connection.contentLength
+                var downloadedBytes = 0
+
+                connection.inputStream.use { input ->
+                    FileOutputStream(tempFile).use { output ->
+                        val buffer = ByteArray(8192)
+                        var bytesRead: Int
+                        while (input.read(buffer).also { bytesRead = it } != -1) {
+                            output.write(buffer, 0, bytesRead)
+                            downloadedBytes += bytesRead
+                            if (totalSize > 0) {
+                                val progress = downloadedBytes.toFloat() / totalSize
+                                withContext(Dispatchers.Main) { onProgress(progress) }
+                            }
+                        }
+                    }
+                }
+
+                if (tempFile.exists() && tempFile.length() > 0) {
+                    if (targetFile.exists()) targetFile.delete()
+                    tempFile.renameTo(targetFile)
+                    withContext(Dispatchers.Main) { onComplete(true) }
+                } else {
+                    withContext(Dispatchers.Main) { onComplete(false) }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) { onComplete(false) }
+            }
+        }
     }
 
     suspend fun downloadAndCacheMap(

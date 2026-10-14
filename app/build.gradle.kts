@@ -47,8 +47,10 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation("androidx.compose.material:material-icons-extended")
 
-    // Standalone GIS Map Engine (Zero API Key required)
+    // Standalone GIS Map Engine & Mapsforge Offline Vector Support
     implementation(libs.osmdroid.android)
+    implementation("org.osmdroid:osmdroid-mapsforge:6.1.18")
+    implementation("org.mapsforge:mapsforge-map-android:0.20.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
