@@ -29,6 +29,8 @@ Language: Kotlin
 
 UI Framework: Jetpack Compose (Material 3)
 
+Offline maps database: MapsForge
+
 Storage: Local database (Room / SQLite)
 
 Development Environment: Android Studio
