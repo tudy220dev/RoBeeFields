@@ -5,16 +5,14 @@ plugins {
 
 android {
     namespace = "com.example.hivepoint"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.hivepoint"
         minSdk = 24
-        targetSdk = 37
-        versionCode = 2
-        versionName = "1.0.1"
+        targetSdk = 35
+        versionCode = 3
+        versionName = "0.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,6 +24,9 @@ android {
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
             }
         }
+    }
+    sourceSets.named("main") {
+        res.srcDirs("src/main/res", "imgs")
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
