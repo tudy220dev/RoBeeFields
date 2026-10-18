@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -58,9 +57,11 @@ import com.example.hivepoint.model.ChangelogSection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(
+    selectedLanguage: String = "Română",
     onOpenDrawer: () -> Unit
 ) {
     var selectedCategory by remember { mutableStateOf(ChangelogCategory.ALL) }
+    val isEnglish = selectedLanguage == "English"
 
     val filteredEntries = remember(selectedCategory) {
         if (selectedCategory == ChangelogCategory.ALL) {
@@ -73,10 +74,15 @@ fun AboutScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Despre RoBee Fields") },
+                title = {
+                    Text(if (isEnglish) "About RoBee Fields" else "Despre RoBee Fields")
+                },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Meniu")
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = if (isEnglish) "Menu" else "Meniu"
+                        )
                     }
                 }
             )
@@ -119,7 +125,10 @@ fun AboutScreen(
                                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Text(
-                                    text = "Sistem De navigare, Offline-First și Descentralizat",
+                                    text = if (isEnglish)
+                                        "Navigation System, Offline-First & Decentralized"
+                                    else
+                                        "Sistem De navigare, Offline-First și Descentralizat",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -129,12 +138,18 @@ fun AboutScreen(
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                         Text(
-                            text = "Dezvoltat de Radu Tudor-Andrei și Icătoiu Ștefan (Studenți Robotică Anul 2) pentru apicultori și intervenții pe teren fără conexiune la internet.",
+                            text = if (isEnglish)
+                                "Developed by Radu Tudor-Andrei and Icătoiu Ștefan (2nd Year Robotics Students) for beekeepers and field operations without internet connection."
+                            else
+                                "Dezvoltat de Radu Tudor-Andrei și Icătoiu Ștefan (Studenți Robotică Anul 2) pentru apicultori și intervenții pe teren fără conexiune la internet.",
                             style = MaterialTheme.typography.bodyMedium
                         )
 
                         Text(
-                            text = "Principii: Zero servere centrale • Stocare locală pură • Transfer P2P SMS/mesh compact.",
+                            text = if (isEnglish)
+                                "Principles: Zero central servers • Pure local storage • Compact P2P SMS/mesh transfer."
+                            else
+                                "Principii: Zero servere centrale • Stocare locală pură • Transfer P2P SMS/mesh compact.",
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -158,7 +173,10 @@ fun AboutScreen(
                                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Text(
-                                text = "Istoricul actualizărilor RoBee Fields",
+                                text = if (isEnglish)
+                                    "RoBee Fields Update History"
+                                else
+                                    "Istoricul actualizărilor RoBee Fields",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -181,7 +199,7 @@ fun AboutScreen(
                                     .clickable { selectedCategory = category }
                             ) {
                                 Text(
-                                    text = category.label,
+                                    text = category.getLabel(selectedLanguage),
                                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
@@ -197,6 +215,7 @@ fun AboutScreen(
             itemsIndexed(filteredEntries) { index, entry ->
                 TimelineEntryItem(
                     entry = entry,
+                    selectedLanguage = selectedLanguage,
                     isFirst = index == 0,
                     isLast = index == filteredEntries.lastIndex
                 )
@@ -212,6 +231,7 @@ fun AboutScreen(
 @Composable
 fun TimelineEntryItem(
     entry: ChangelogEntry,
+    selectedLanguage: String,
     isFirst: Boolean,
     isLast: Boolean
 ) {
@@ -231,7 +251,7 @@ fun TimelineEntryItem(
             horizontalAlignment = Alignment.End
         ) {
             Text(
-                text = entry.date,
+                text = entry.getDate(selectedLanguage),
                 style = MaterialTheme.typography.labelSmall.copy(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium
@@ -312,7 +332,7 @@ fun TimelineEntryItem(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ) {
                     Text(
-                        text = entry.tag,
+                        text = entry.getTag(selectedLanguage),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
                         style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold)
                     )
@@ -320,12 +340,12 @@ fun TimelineEntryItem(
 
                 // Title
                 Text(
-                    text = entry.title,
+                    text = entry.getTitle(selectedLanguage),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
 
                 // Description
-                entry.description?.let { desc ->
+                entry.getDescription(selectedLanguage)?.let { desc ->
                     Text(
                         text = desc,
                         style = MaterialTheme.typography.bodyMedium,
@@ -335,7 +355,10 @@ fun TimelineEntryItem(
 
                 // Sections (New, Improved, Updated, etc.)
                 entry.sections.forEach { section ->
-                    ChangelogSectionView(section = section)
+                    ChangelogSectionView(
+                        section = section,
+                        selectedLanguage = selectedLanguage
+                    )
                 }
             }
         }
@@ -343,7 +366,10 @@ fun TimelineEntryItem(
 }
 
 @Composable
-fun ChangelogSectionView(section: ChangelogSection) {
+fun ChangelogSectionView(
+    section: ChangelogSection,
+    selectedLanguage: String
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -351,14 +377,14 @@ fun ChangelogSectionView(section: ChangelogSection) {
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = section.title,
+            text = section.getTitle(selectedLanguage),
             style = MaterialTheme.typography.labelLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.primary
         )
 
-        section.items.forEach { itemText ->
+        section.getItems(selectedLanguage).forEach { itemText ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
