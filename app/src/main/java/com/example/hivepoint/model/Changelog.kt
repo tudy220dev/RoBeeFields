@@ -9,50 +9,70 @@ enum class ChangelogCategory(val label: String) {
 }
 
 data class ChangelogSection(
-    val title: String,
-    val items: List<String>
+    val titleRo: String,
+    val titleEn: String,
+    val itemsRo: List<String>,
+    val itemsEn: List<String>
 ) {
-    fun getTitle(lang: String): String = title
-    fun getItems(lang: String): List<String> = items
+    fun getTitle(lang: String): String = if (lang == "English") titleEn else titleRo
+    fun getItems(lang: String): List<String> = if (lang == "English") itemsEn else itemsRo
 }
 
 data class ChangelogEntry(
     val version: String,
-    val date: String,
-    val title: String,
-    val tag: String,
+    val dateRo: String,
+    val dateEn: String,
+    val titleRo: String,
+    val titleEn: String,
+    val tagRo: String,
+    val tagEn: String,
     val category: ChangelogCategory = ChangelogCategory.CORE,
-    val description: String? = null,
+    val descriptionRo: String? = null,
+    val descriptionEn: String? = null,
     val sections: List<ChangelogSection> = emptyList()
 ) {
-    fun getDate(lang: String): String = date
-    fun getTag(lang: String): String = tag
-    fun getTitle(lang: String): String = title
-    fun getDescription(lang: String): String? = description
+    fun getDate(lang: String): String = if (lang == "English") dateEn else dateRo
+    fun getTag(lang: String): String = if (lang == "English") tagEn else tagRo
+    fun getTitle(lang: String): String = if (lang == "English") titleEn else titleRo
+    fun getDescription(lang: String): String? = if (lang == "English") descriptionEn else descriptionRo
 }
 
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
             version = "v0.4.0",
-            date = "19 Oct 2026",
-            title = "RoBee Fields 0.4.0 (Field & Inspection Edition)",
-            tag = "Field",
+            dateRo = "19 Oct 2026",
+            dateEn = "19 Oct 2026",
+            titleRo = "RoBee Fields 0.4.0 (Ediție Inspecție & Teren)",
+            titleEn = "RoBee Fields 0.4.0 (Field & Inspection Edition)",
+            tagRo = "Teren",
+            tagEn = "Field",
             category = ChangelogCategory.FIELD,
-            description = "Sistem complet de inspecție pe teren cu 5 secțiuni dedicate, jurnale persistente și export/import CSV cu alegerea locației.",
+            descriptionRo = "Sistem complet de inspecție pe teren cu 5 secțiuni dedicate, jurnale persistente și export/import CSV cu alegerea locației.",
+            descriptionEn = "Complete field inspection system with 5 dedicated sections, persistent logs, and CSV export/import with location selection.",
             sections = listOf(
                 ChangelogSection(
-                    title = "New",
-                    items = listOf(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
                         "Jurnale de inspecție pe teren cu 5 secțiuni intuitive (Starea Reginei, Puterea Familiei, Intervenții & Tratamente, Comportament și Notițe rapide).",
                         "Funcționalitate de Export și Import în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
                         "Istoric detaliat al inspecțiilor salvat persistent în baza de date SQLite."
+                    ),
+                    itemsEn = listOf(
+                        "Field inspection logs with 5 intuitive sections (Queen State, Family Power, Treatments & Interventions, Temperament, Quick Notes).",
+                        "CSV Export & Import functionality allowing folder/location selection and file choice.",
+                        "Detailed inspection history persistently saved in SQLite database."
                     )
                 ),
                 ChangelogSection(
-                    title = "Improved",
-                    items = listOf(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
                         "Optimizarea fluxului de lucru pentru apicultori pe teren fără conexiune internet."
+                    ),
+                    itemsEn = listOf(
+                        "Optimized workflow for beekeepers in the field without internet connection."
                     )
                 )
             )
