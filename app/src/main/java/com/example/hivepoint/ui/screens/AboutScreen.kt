@@ -199,7 +199,7 @@ fun AboutScreen(
                                     .clickable { selectedCategory = category }
                             ) {
                                 Text(
-                                    text = category.getLabel(selectedLanguage),
+                                    text = category.label,
                                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal

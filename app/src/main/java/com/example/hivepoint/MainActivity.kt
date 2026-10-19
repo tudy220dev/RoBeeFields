@@ -310,7 +310,7 @@ fun HivePointApp(
                     Spacer(modifier = Modifier.weight(1f))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     Text(
-                        text = "RoBee Fields v0.3.2 (Field Edition)",
+                        text = "RoBee Fields v0.4.0 (Field Edition)",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp, bottom = 16.dp)

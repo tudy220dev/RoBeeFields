@@ -1,57 +1,62 @@
 package com.example.hivepoint.model
 
-enum class ChangelogCategory(val labelRo: String, val labelEn: String) {
-    ALL("Toate", "All"),
-    FIELD("Teren", "Field"),
-    SYNC("Sincronizare", "Sync"),
-    MAPS("Hărți", "Maps"),
-    CORE("Nucleu", "Core");
-
-    fun getLabel(language: String = "Română"): String =
-        if (language == "English") labelEn else labelRo
+enum class ChangelogCategory(val label: String) {
+    ALL("All"),
+    FIELD("Field"),
+    SYNC("Sync"),
+    MAPS("Maps"),
+    CORE("Core")
 }
 
 data class ChangelogSection(
-    val titleRo: String,
-    val titleEn: String,
-    val itemsRo: List<String>,
-    val itemsEn: List<String>
+    val title: String,
+    val items: List<String>
 ) {
-    fun getTitle(language: String = "Română"): String =
-        if (language == "English") titleEn else titleRo
-
-    fun getItems(language: String = "Română"): List<String> =
-        if (language == "English") itemsEn else itemsRo
+    fun getTitle(lang: String): String = title
+    fun getItems(lang: String): List<String> = items
 }
 
 data class ChangelogEntry(
     val version: String,
-    val dateRo: String,
-    val dateEn: String,
-    val titleRo: String,
-    val titleEn: String,
-    val tagRo: String,
-    val tagEn: String,
+    val date: String,
+    val title: String,
+    val tag: String,
     val category: ChangelogCategory = ChangelogCategory.CORE,
-    val descriptionRo: String? = null,
-    val descriptionEn: String? = null,
+    val description: String? = null,
     val sections: List<ChangelogSection> = emptyList()
 ) {
-    fun getDate(language: String = "Română"): String =
-        if (language == "English") dateEn else dateRo
-
-    fun getTitle(language: String = "Română"): String =
-        if (language == "English") titleEn else titleRo
-
-    fun getTag(language: String = "Română"): String =
-        if (language == "English") tagEn else tagRo
-
-    fun getDescription(language: String = "Română"): String? =
-        if (language == "English") descriptionEn else descriptionRo
+    fun getDate(lang: String): String = date
+    fun getTag(lang: String): String = tag
+    fun getTitle(lang: String): String = title
+    fun getDescription(lang: String): String? = description
 }
 
 object ChangelogRepository {
     val entries = listOf(
+        ChangelogEntry(
+            version = "v0.4.0",
+            date = "19 Oct 2026",
+            title = "RoBee Fields 0.4.0 (Field & Inspection Edition)",
+            tag = "Field",
+            category = ChangelogCategory.FIELD,
+            description = "Sistem complet de inspecție pe teren cu 5 secțiuni dedicate, jurnale persistente și export/import CSV cu alegerea locației.",
+            sections = listOf(
+                ChangelogSection(
+                    title = "New",
+                    items = listOf(
+                        "Jurnale de inspecție pe teren cu 5 secțiuni intuitive (Starea Reginei, Puterea Familiei, Intervenții & Tratamente, Comportament și Notițe rapide).",
+                        "Funcționalitate de Export și Import în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
+                        "Istoric detaliat al inspecțiilor salvat persistent în baza de date SQLite."
+                    )
+                ),
+                ChangelogSection(
+                    title = "Improved",
+                    items = listOf(
+                        "Optimizarea fluxului de lucru pentru apicultori pe teren fără conexiune internet."
+                    )
+                )
+            )
+        ),
         ChangelogEntry(
             version = "v0.3.2",
             dateRo = "18 Oct 2026",
