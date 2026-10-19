@@ -1,6 +1,9 @@
 package com.example.hivepoint.ui.screens
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,9 +49,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.hivepoint.model.MapType
+import com.example.hivepoint.util.HiveCsvExporter
 import com.example.hivepoint.util.MapCacheManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withContext
 
 data class MapsforgeRegion(
     val id: String,
@@ -200,6 +206,42 @@ fun SettingsScreen(
     var offlineSyncEnabled by remember { mutableStateOf(true) }
     val isOnline = remember { MapCacheManager.isNetworkAvailable(context) }
 
+    // CSV Export Launcher
+    val exportCsvLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("text/csv")
+    ) { uri: Uri? ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                val success = HiveCsvExporter.exportToCsv(context, uri)
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(context, "Export CSV reușit cu succes!", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Eroare la exportul CSV.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
+    // CSV Import Launcher
+    val importCsvLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            scope.launch(Dispatchers.IO) {
+                val success = HiveCsvExporter.importFromCsv(context, uri)
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(context, "Import CSV reușit cu succes!", Toast.LENGTH_LONG).show()
+                    } else {
+                        Toast.makeText(context, "Eroare la importul CSV.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -243,6 +285,55 @@ fun SettingsScreen(
                             checked = isDarkTheme,
                             onCheckedChange = { onDarkThemeChange(it) }
                         )
+                    }
+                }
+            }
+
+            // CSV Export / Import Card
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = if (selectedLanguage == "English") "Export & Import Hives (CSV)" else "Export & Import Stupi și Jurnale (CSV)",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = if (selectedLanguage == "English")
+                                "Backup or restore all beehives and inspection logs in CSV format, choosing where to save or open from."
+                            else
+                                "Salvează sau restaurează toate datele despre stupi și jurnale în format CSV, alegând locația de salvare sau fișierul dorit.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Button(
+                                onClick = {
+                                    val filename = "robeefields_hives_export_${System.currentTimeMillis()}.csv"
+                                    exportCsvLauncher.launch(filename)
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(if (selectedLanguage == "English") "Export CSV" else "Exportă CSV")
+                            }
+
+                            OutlinedButton(
+                                onClick = {
+                                    importCsvLauncher.launch(arrayOf("text/*", "application/vnd.ms-excel", "text/comma-separated-values", "*/*"))
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(if (selectedLanguage == "English") "Import CSV" else "Importă CSV")
+                            }
+                        }
                     }
                 }
             }
