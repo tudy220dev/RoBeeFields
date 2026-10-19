@@ -23,11 +23,19 @@ enum class HiveStatus {
     }
 }
 
-enum class Temperament {
-    CALM,
-    NERVOUS,
-    AGGRESSIVE,
-    UNKNOWN
+enum class QueenState(val displayName: String) {
+    SEEN("Văzută"),
+    EGGS("Semne (ouă proaspete)"),
+    MISSING("Lipsă / Orfan"),
+    QUEEN_CELLS("Botci prezente"),
+    UNKNOWN("Nespecificat")
+}
+
+enum class Temperament(val displayName: String) {
+    CALM("Calmă"),
+    NORMAL("Normală"),
+    AGGRESSIVE("Agresivă"),
+    UNKNOWN("Necunoscut")
 }
 
 data class Apiary(
@@ -59,9 +67,14 @@ data class InspectionLog(
     val id: String = UUID.randomUUID().toString(),
     val hiveId: String,
     val timestamp: Long = System.currentTimeMillis(),
-    val queenSeen: Boolean = false,
-    val honeyFrames: Int = 0,
-    val broodFrames: Int = 0,
+    val queenState: QueenState = QueenState.UNKNOWN,
+    val broodFrames: Int = 5,
+    val honeyFrames: Int = 7,
+    val addedSuper: Boolean = false,
+    val varroaTreatment: Boolean = false,
+    val fedSyrup: Boolean = false,
+    val fedPatty: Boolean = false,
+    val changedBottomBoard: Boolean = false,
     val temperament: Temperament = Temperament.CALM,
     val notes: String = ""
 )

@@ -12,20 +12,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
@@ -36,19 +42,24 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,10 +67,20 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.hivepoint.db.HiveDbHelper
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
+import com.example.hivepoint.model.InspectionLog
+import com.example.hivepoint.model.QueenState
+import com.example.hivepoint.model.Temperament
 import com.example.hivepoint.util.HiveSerializer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -88,9 +109,27 @@ fun HiveActionBottomSheet(
     onDeleteHive: (String) -> Unit
 ) {
     val context = LocalContext.current
+    val dbHelper = remember { HiveDbHelper(context) }
+    val scope = rememberCoroutineScope()
+
+    var logs by remember { mutableStateOf<List<InspectionLog>>(emptyList()) }
     var showEditDialog by remember { mutableStateOf(false) }
     var showDetailsDialog by remember { mutableStateOf(false) }
     var showGalleryDialog by remember { mutableStateOf(false) }
+    var showCreateLogDialog by remember { mutableStateOf(false) }
+    var showViewLogsDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(hive.id) {
+        logs = dbHelper.getInspectionLogsForHive(hive.id)
+    }
+
+    val latestLog = logs.firstOrNull()
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("ro", "RO")) }
+    val lastLogText = if (latestLog != null) {
+        "Ultimul jurnal: ${dateFormat.format(Date(latestLog.timestamp))} | Regină: ${latestLog.queenState.displayName}"
+    } else {
+        "Niciun jurnal înregistrat încă."
+    }
 
     // Multi-photo picker launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -114,27 +153,43 @@ fun HiveActionBottomSheet(
                 .padding(bottom = 24.dp)
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = "🐝 Meniu Stup: ${hive.hiveNumber}",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = String.format(
-                        Locale.US,
-                        "GPS: %.5f, %.5f | Status: %s | Poze: %d",
-                        hive.latitude ?: 0.0,
-                        hive.longitude ?: 0.0,
-                        hive.status.toDisplayName("Română"),
-                        hive.photoUris.size
-                    ),
+                    text = lastLogText,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.primary
                 )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { showViewLogsDialog = true },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.History, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                        Text("Vezi Jurnale (${logs.size})")
+                    }
+                    Button(
+                        onClick = { showCreateLogDialog = true },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                        Text("Crează Jurnal")
+                    }
+                }
             }
 
-            HorizontalDivider()
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             // 1. Vezi Galeria Foto (If photos attached)
             if (hive.photoUris.isNotEmpty()) {
@@ -151,10 +206,10 @@ fun HiveActionBottomSheet(
                 )
             }
 
-            // 2. Vezi Stup (Inspector Complete)
+            // 2. Vezi Stup
             ListItem(
-                headlineContent = { Text("Vezi Stup / Inspector Stupină") },
-                supportingContent = { Text("Afișează detaliile complete ale stupului și istoricul") },
+                headlineContent = { Text("Vezi Stup / Detalii Complete") },
+                supportingContent = { Text("Afișează detaliile complete ale stupului") },
                 leadingContent = { Icon(Icons.Default.Visibility, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
@@ -177,10 +232,10 @@ fun HiveActionBottomSheet(
                 }
             )
 
-            // 4. Add Multiple Photos
+            // 4. Add Photos
             ListItem(
                 headlineContent = { Text(if (hive.photoUris.isNotEmpty()) "Adaugă Mai Multe Poze" else "Adaugă Poze Stup") },
-                supportingContent = { Text(if (hive.photoUris.isNotEmpty()) "${hive.photoUris.size} poze salvate. Atinge pentru a adăuga altele." else "Selectează una sau mai multe poze din galerie") },
+                supportingContent = { Text(if (hive.photoUris.isNotEmpty()) "${hive.photoUris.size} poze salvate." else "Selectează poze din galerie") },
                 leadingContent = { Icon(Icons.Default.AddAPhoto, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
@@ -234,6 +289,30 @@ fun HiveActionBottomSheet(
         }
     }
 
+    if (showCreateLogDialog) {
+        CreateInspectionLogDialog(
+            hive = hive,
+            latestLog = latestLog,
+            onDismiss = { showCreateLogDialog = false },
+            onSave = { newLog ->
+                scope.launch {
+                    dbHelper.insertInspectionLog(newLog)
+                    logs = dbHelper.getInspectionLogsForHive(hive.id)
+                    showCreateLogDialog = false
+                    Toast.makeText(context, "Jurnal de inspecție salvat cu succes!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
+    }
+
+    if (showViewLogsDialog) {
+        ViewInspectionLogsDialog(
+            hive = hive,
+            logs = logs,
+            onDismiss = { showViewLogsDialog = false }
+        )
+    }
+
     if (showEditDialog) {
         EditHiveDialog(
             hive = hive,
@@ -264,6 +343,310 @@ fun HiveActionBottomSheet(
             onDismiss = { showGalleryDialog = false }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CreateInspectionLogDialog(
+    hive: Beehive,
+    latestLog: InspectionLog?,
+    onDismiss: () -> Unit,
+    onSave: (InspectionLog) -> Unit
+) {
+    var selectedQueenState by remember { mutableStateOf(latestLog?.queenState ?: QueenState.SEEN) }
+    var broodFrames by remember { mutableStateOf(latestLog?.broodFrames ?: 5) }
+    var honeyFrames by remember { mutableStateOf(latestLog?.honeyFrames ?: 7) }
+
+    var addedSuper by remember { mutableStateOf(false) }
+    var varroaTreatment by remember { mutableStateOf(false) }
+    var fedSyrup by remember { mutableStateOf(false) }
+    var fedPatty by remember { mutableStateOf(false) }
+    var changedBottomBoard by remember { mutableStateOf(false) }
+
+    var temperament by remember { mutableStateOf(latestLog?.temperament ?: Temperament.CALM) }
+    var notes by remember { mutableStateOf("") }
+    var showNotesField by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Jurnal Inspecție: Stup ${hive.hiveNumber}") },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Section 1: Starea Reginei
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("1. Starea Reginei", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        QueenState.entries.filter { it != QueenState.UNKNOWN }.forEach { state ->
+                            val isSelected = selectedQueenState == state
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { selectedQueenState = state }
+                            ) {
+                                Text(
+                                    text = state.displayName,
+                                    modifier = Modifier.padding(12.dp),
+                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                HorizontalDivider()
+
+                // Section 2: Puterea Familiei
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("2. Puterea Familiei (Rame)", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Rame Puiet", style = MaterialTheme.typography.bodyMedium)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            IconButton(onClick = { if (broodFrames > 0) broodFrames-- }) {
+                                Icon(Icons.Default.Remove, contentDescription = "Minus")
+                            }
+                            Text(text = "$broodFrames", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            IconButton(onClick = { broodFrames++ }) {
+                                Icon(Icons.Default.Add, contentDescription = "Plus")
+                            }
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("Rame Miere / Păstură", style = MaterialTheme.typography.bodyMedium)
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            IconButton(onClick = { if (honeyFrames > 0) honeyFrames-- }) {
+                                Icon(Icons.Default.Remove, contentDescription = "Minus")
+                            }
+                            Text(text = "$honeyFrames", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            IconButton(onClick = { honeyFrames++ }) {
+                                Icon(Icons.Default.Add, contentDescription = "Plus")
+                            }
+                        }
+                    }
+                }
+
+                HorizontalDivider()
+
+                // Section 3: Intervenții & Tratamente
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("3. Intervenții & Tratamente", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        FilterChip(
+                            selected = addedSuper,
+                            onClick = { addedSuper = !addedSuper },
+                            label = { Text("+ Adăugat Cată") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        FilterChip(
+                            selected = varroaTreatment,
+                            onClick = { varroaTreatment = !varroaTreatment },
+                            label = { Text("Tratament Varroa") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        FilterChip(
+                            selected = fedSyrup,
+                            onClick = { fedSyrup = !fedSyrup },
+                            label = { Text("Hrănit (Sirop)") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        FilterChip(
+                            selected = fedPatty,
+                            onClick = { fedPatty = !fedPatty },
+                            label = { Text("Hrănit (Turtă)") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        FilterChip(
+                            selected = changedBottomBoard,
+                            onClick = { changedBottomBoard = !changedBottomBoard },
+                            label = { Text("Schimbat Fund/Pardoseală") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+
+                HorizontalDivider()
+
+                // Section 4: Comportament & Agresivitate
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text("4. Comportament & Agresivitate", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Temperament.entries.filter { it != Temperament.UNKNOWN }.forEach { temp ->
+                            val isSelected = temperament == temp
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = if (isSelected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                                contentColor = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable { temperament = temp }
+                            ) {
+                                Text(
+                                    text = temp.displayName,
+                                    modifier = Modifier.padding(vertical = 10.dp),
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal),
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                }
+
+                HorizontalDivider()
+
+                // Section 5: Notiță Rapidă
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    if (!showNotesField) {
+                        OutlinedButton(
+                            onClick = { showNotesField = true },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("💬 Apasă pentru notă rapidă (ex: de schimbat matca)")
+                        }
+                    } else {
+                        OutlinedTextField(
+                            value = notes,
+                            onValueChange = { notes = it },
+                            label = { Text("Notiță rapidă / Observații") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(90.dp),
+                            maxLines = 3
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val log = InspectionLog(
+                        hiveId = hive.id,
+                        queenState = selectedQueenState,
+                        broodFrames = broodFrames,
+                        honeyFrames = honeyFrames,
+                        addedSuper = addedSuper,
+                        varroaTreatment = varroaTreatment,
+                        fedSyrup = fedSyrup,
+                        fedPatty = fedPatty,
+                        changedBottomBoard = changedBottomBoard,
+                        temperament = temperament,
+                        notes = notes
+                    )
+                    onSave(log)
+                }
+            ) {
+                Text("Salvează")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Anulează")
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ViewInspectionLogsDialog(
+    hive: Beehive,
+    logs: List<InspectionLog>,
+    onDismiss: () -> Unit
+) {
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("ro", "RO")) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Jurnale Inspecție: Stup ${hive.hiveNumber}") },
+        text = {
+            if (logs.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                    Text("Niciun jurnal înregistrat pentru acest stup.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(logs) { log ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f))
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = dateFormat.format(Date(log.timestamp)),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "👑 Regină: ${log.queenState.displayName} | 🐝 Puiet: ${log.broodFrames} | 🍯 Miere: ${log.honeyFrames}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                val interventions = mutableListOf<String>()
+                                if (log.addedSuper) interventions.add("Cată adăugată")
+                                if (log.varroaTreatment) interventions.add("Varroa")
+                                if (log.fedSyrup) interventions.add("Sirop")
+                                if (log.fedPatty) interventions.add("Turtă")
+                                if (log.changedBottomBoard) interventions.add("Fund schimbat")
+
+                                if (interventions.isNotEmpty()) {
+                                    Text(
+                                        text = "Intervenții: ${interventions.joinToString(", ")}",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+
+                                Text(
+                                    text = "Temperament: ${log.temperament.displayName}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+
+                                if (log.notes.isNotBlank()) {
+                                    Text(
+                                        text = "Notă: ${log.notes}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss) {
+                Text("Închide")
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -363,51 +746,29 @@ fun EditHiveDialog(
 fun HiveDetailsDialog(
     hive: Beehive,
     onDismiss: () -> Unit,
-    onOpenGallery: () -> Unit = {}
+    onOpenGallery: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("🐝 Inspector Stup: ${hive.hiveNumber}") },
+        title = { Text("Detalii Stup: ${hive.hiveNumber}") },
         text = {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                if (hive.photoUris.isNotEmpty()) {
-                    Text("Galerie Poze (${hive.photoUris.size}):", style = MaterialTheme.typography.labelMedium)
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(hive.photoUris) { photoUriStr ->
-                            val bitmap = rememberPhotoBitmap(photoUriStr)
-                            if (bitmap != null) {
-                                Card(
-                                    modifier = Modifier
-                                        .width(160.dp)
-                                        .height(120.dp)
-                                        .clickable { onOpenGallery() },
-                                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-                                ) {
-                                    Image(
-                                        bitmap = bitmap,
-                                        contentDescription = "Poză Stup",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Text("Stare / Status: ${hive.status.toDisplayName("Română")}", style = MaterialTheme.typography.titleMedium)
-                Text(String.format(Locale.US, "Coordonate Latitudine: %.5f", hive.latitude ?: 0.0))
-                Text(String.format(Locale.US, "Coordonate Longitudine: %.5f", hive.longitude ?: 0.0))
+                Text("Stare: ${hive.status.toDisplayName("Română")}")
+                Text("Coordonate: ${hive.latitude}, ${hive.longitude}")
+                Text("Ultima actualizare: ${SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("ro", "RO")).format(Date(hive.updatedAt))}")
                 if (hive.notes.isNotBlank()) {
-                    Text("Descriere / Note Teren: ${hive.notes}")
+                    Text("Note: ${hive.notes}")
+                }
+                if (hive.photoUris.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedButton(onClick = onOpenGallery) {
+                        Text("Vezi Galerie (${hive.photoUris.size} poze)")
+                    }
                 }
             }
         },
@@ -426,97 +787,72 @@ fun HivePhotoGalleryDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-
-    // Add additional photos launcher from inside the gallery
-    val addMorePhotosLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents()
-    ) { uris: List<Uri> ->
-        if (uris.isNotEmpty()) {
-            val newUris = (hive.photoUris + uris.map { it.toString() }).distinct()
-            val updated = hive.copy(
-                photoUris = newUris,
-                updatedAt = System.currentTimeMillis()
-            )
-            onUpdateHive(updated)
-            Toast.makeText(context, "${uris.size} poze adăugate!", Toast.LENGTH_SHORT).show()
-        }
-    }
+    var currentPhotos by remember { mutableStateOf(hive.photoUris) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("📸 Galerie Foto: ${hive.hiveNumber} (${hive.photoUris.size} poze)") },
+        title = { Text("Galerie Foto - Stup ${hive.hiveNumber}") },
         text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
-            ) {
-                OutlinedButton(
-                    onClick = { addMorePhotosLauncher.launch("image/*") },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddAPhoto,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 6.dp)
-                    )
-                    Text("Adaugă Alte Poze în Galerie")
+            if (currentPhotos.isEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) {
+                    Text("Nicio poză în galerie.", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-
-                if (hive.photoUris.isNotEmpty()) {
-                    hive.photoUris.forEachIndexed { index, photoUriStr ->
-                        val bitmap = rememberPhotoBitmap(photoUriStr)
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(currentPhotos) { uriStr ->
+                        val bitmap = rememberPhotoBitmap(uriStr)
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
-                            Column(
-                                modifier = Modifier.padding(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
                                 if (bitmap != null) {
                                     Image(
                                         bitmap = bitmap,
-                                        contentDescription = "Poză Stup ${index + 1}",
-                                        contentScale = ContentScale.Fit,
+                                        contentDescription = "Poză stup",
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(220.dp)
+                                            .height(200.dp),
+                                        contentScale = ContentScale.Crop
                                     )
                                 } else {
-                                    Text("Fotografia #${index + 1} nu a putut fi încărcată.")
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(100.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text("Imagine indisponibilă")
+                                    }
                                 }
-
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     TextButton(
                                         onClick = {
-                                            val remainingUris = hive.photoUris.filterNot { it == photoUriStr }
+                                            currentPhotos = currentPhotos - uriStr
                                             val updated = hive.copy(
-                                                photoUris = remainingUris,
+                                                photoUris = currentPhotos,
                                                 updatedAt = System.currentTimeMillis()
                                             )
                                             onUpdateHive(updated)
-                                            Toast.makeText(context, "Poză ștearsă!", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(context, "Poză ștearsă", Toast.LENGTH_SHORT).show()
                                         }
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier.padding(end = 4.dp)
-                                        )
-                                        Text("Șterge Poză", color = MaterialTheme.colorScheme.error)
+                                        Text("Șterge poză", color = MaterialTheme.colorScheme.error)
                                     }
                                 }
                             }
                         }
                     }
-                } else {
-                    Text("Nicio poză în galerie.")
                 }
             }
         },
