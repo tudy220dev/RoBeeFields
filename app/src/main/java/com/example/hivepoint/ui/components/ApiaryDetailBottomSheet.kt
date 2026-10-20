@@ -2,8 +2,6 @@ package com.example.hivepoint.ui.components
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -36,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -52,19 +50,23 @@ fun ApiaryDetailBottomSheet(
     apiaryName: String,
     apiaryLatitude: Double,
     apiaryLongitude: Double,
+    appCurrentLat: Double,
+    appCurrentLon: Double,
     hives: List<Beehive>,
     onDismiss: () -> Unit,
     onAddHiveToApiary: (Beehive) -> Unit,
     onSelectHive: (Beehive) -> Unit,
     onRenameApiary: (String) -> Unit,
-    onDeleteApiary: () -> Unit
+    onDeleteApiary: () -> Unit,
+    onUpdateCoords: (Double, Double) -> Unit,
+    onStartMapPickMode: () -> Unit
 ) {
     val context = LocalContext.current
     var currentApiaryTitle by remember { mutableStateOf(apiaryName.removePrefix("🏠").trim()) }
     var showAddHiveDialog by remember { mutableStateOf(false) }
     var showEditApiaryDialog by remember { mutableStateOf(false) }
+    var showMoveDialog by remember { mutableStateOf(false) }
 
-    // Filter out parent apiary entries so ONLY individual beehives inside this apiary are shown
     val individualHives = hives.filterNot { hive ->
         hive.hiveNumber.removePrefix("🏠").trim().equals(currentApiaryTitle, ignoreCase = true)
     }
@@ -75,7 +77,6 @@ fun ApiaryDetailBottomSheet(
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
         ) {
-            // Header
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -93,7 +94,7 @@ fun ApiaryDetailBottomSheet(
 
             HorizontalDivider()
 
-            // Quick Actions Bar (Add Hive, Edit Apiary, Share P2P)
+            // Quick Actions Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,23 +105,23 @@ fun ApiaryDetailBottomSheet(
                     onClick = { showAddHiveDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 2.dp)
-                    )
-                    Text("Adaugă Stup", style = MaterialTheme.typography.labelSmall)
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
+                    Text("Adaugă", style = MaterialTheme.typography.labelSmall)
+                }
+
+                OutlinedButton(
+                    onClick = { showMoveDialog = true },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
+                    Text("Mută", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
                     onClick = { showEditApiaryDialog = true },
-                    modifier = Modifier.weight(1.1f)
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 2.dp)
-                    )
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
                     Text("Editează", style = MaterialTheme.typography.labelSmall)
                 }
 
@@ -134,13 +135,9 @@ fun ApiaryDetailBottomSheet(
                         context.startActivity(Intent.createChooser(shareIntent, "Trimite Stupină P2P"))
                         Toast.makeText(context, "Telemetrie Stupină P2P generată!", Toast.LENGTH_SHORT).show()
                     },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.9f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 2.dp)
-                    )
+                    Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
                     Text("P2P", style = MaterialTheme.typography.labelSmall)
                 }
             }
@@ -151,7 +148,6 @@ fun ApiaryDetailBottomSheet(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
-            // Lazy Column listing ONLY individual beehives
             if (individualHives.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
@@ -174,7 +170,7 @@ fun ApiaryDetailBottomSheet(
                                 },
                                 trailingContent = {
                                     Button(onClick = { onSelectHive(hive) }) {
-                                        Text("Opțiuni Stup")
+                                        Text("Opțiuni")
                                     }
                                 }
                             )
@@ -189,7 +185,7 @@ fun ApiaryDetailBottomSheet(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Text(
-                        text = "Niciun stup adăugat încă în această stupină. Apasă pe 'Adaugă Stup' pentru a înregistra primul stup!",
+                        text = "Niciun stup adăugat încă în această stupină.",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -198,7 +194,6 @@ fun ApiaryDetailBottomSheet(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Delete Apiary Button
             TextButton(
                 onClick = {
                     onDeleteApiary()
@@ -212,9 +207,30 @@ fun ApiaryDetailBottomSheet(
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(end = 6.dp)
                 )
-                Text("Șterge Toată Stupina și Stupii ei", color = MaterialTheme.colorScheme.error)
+                Text("Șterge Toată Stupina și Stupii", color = MaterialTheme.colorScheme.error)
             }
         }
+    }
+
+    if (showMoveDialog) {
+        MoveLocationDialog(
+            elementName = "Stupină $currentApiaryTitle",
+            currentLat = apiaryLatitude,
+            currentLon = apiaryLongitude,
+            appCurrentLat = appCurrentLat,
+            appCurrentLon = appCurrentLon,
+            onDismiss = { showMoveDialog = false },
+            onUpdateCoords = { lat: Double, lon: Double ->
+                onUpdateCoords(lat, lon)
+                showMoveDialog = false
+                onDismiss()
+            },
+            onStartMapPickMode = {
+                showMoveDialog = false
+                onDismiss()
+                onStartMapPickMode()
+            }
+        )
     }
 
     if (showAddHiveDialog) {

@@ -40,6 +40,42 @@ data class ChangelogEntry(
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
+            version = "v0.4.1",
+            dateRo = "20 Oct 2026",
+            dateEn = "20 Oct 2026",
+            titleRo = "RoBee Fields 0.4.1 (Mutare Avansată Stupi & Stupine)",
+            titleEn = "RoBee Fields 0.4.1 (Advanced Hive & Apiary Relocation)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Adăugarea funcționalității de mutare a poziției GPS pentru stupi și stupine prin 3 metode interactive pe teren.",
+            descriptionEn = "Added location relocation functionality for individual hives and apiaries via 3 interactive field methods.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
+                        "Dialog de mutare (MoveLocationDialog) pentru stupi și stupine cu opțiunile: 1) Click pe hartă, 2) Locația curentă GPS a telefonului și 3) Coordonate GPS manuale (Lat/Long).",
+                        "Actualizare automată a poziției pe hartă și salvare instantanee în baza de date locală SQLite."
+                    ),
+                    itemsEn = listOf(
+                        "Relocation dialog (MoveLocationDialog) for hives and apiaries featuring: 1) Map tap placement, 2) Current phone GPS location, and 3) Manual GPS coordinates (Lat/Long).",
+                        "Automatic map pin position update and instant persistence in local SQLite database."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
+                        "Optimizarea experienței de utilizare pe teren și actualizarea versiunii aplicației la v0.4.1."
+                    ),
+                    itemsEn = listOf(
+                        "Optimized field user experience and app version updated to v0.4.1."
+                    )
+                )
+            )
+        ),
+        ChangelogEntry(
             version = "v0.4.0",
             dateRo = "19 Oct 2026",
             dateEn = "19 Oct 2026",
@@ -200,42 +236,6 @@ object ChangelogRepository {
             )
         ),
         ChangelogEntry(
-            version = "v0.2.1",
-            dateRo = "12 Oct 2026",
-            dateEn = "12 Oct 2026",
-            titleRo = "Gestiune Stupine și Stupi",
-            titleEn = "Apiary and Hive Management",
-            tagRo = "Sincronizare",
-            tagEn = "Sync",
-            category = ChangelogCategory.SYNC,
-            descriptionRo = "Adăugare și gestiune extinsă a stupinelor pe hartă, cu suport pentru inspecții și evidență individuală.",
-            descriptionEn = "Addition and extended management of apiaries on the map, with support for inspections and individual record keeping.",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Adăugare stupine noi și poziționare GPS pe harta offline.",
-                        "Afișare fișă detaliată pentru fiecare stupină."
-                    ),
-                    itemsEn = listOf(
-                        "Adding new apiaries and GPS positioning on the offline map.",
-                        "Displaying detailed record sheets for each apiary."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Actualizat",
-                    titleEn = "Updated",
-                    itemsRo = listOf(
-                        "Ajustări de compatibilitate pentru sincronizarea datelor despre stupi."
-                    ),
-                    itemsEn = listOf(
-                        "Compatibility adjustments for syncing hive data."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
             version = "v0.2.0",
             dateRo = "12 Oct 2026",
             dateEn = "12 Oct 2026",
@@ -267,42 +267,6 @@ object ChangelogRepository {
                     ),
                     itemsEn = listOf(
                         "Reduced data payload size by over 70% for rapid SMS transmissions."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
-            version = "v0.1.1",
-            dateRo = "11 Oct 2026",
-            dateEn = "11 Oct 2026",
-            titleRo = "Persistență Date și Stocare Locală",
-            titleEn = "Data Persistence & Local Storage",
-            tagRo = "Nucleu",
-            tagEn = "Core",
-            category = ChangelogCategory.CORE,
-            descriptionRo = "Salvarea permanentă a datelor în baza de date locală pe dispozitiv (offline-first).",
-            descriptionEn = "Permanent data persistence in the device local database (offline-first).",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Persistență completă a datelor în stocare locală pe durată lungă.",
-                        "Optimizări și ajustări la interfața cu utilizatorul."
-                    ),
-                    itemsEn = listOf(
-                        "Complete long-term data persistence in local storage.",
-                        "UI optimizations and tweaks."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Actualizat",
-                    titleEn = "Updated",
-                    itemsRo = listOf(
-                        "Stocarea sigură a datelor între sesiunile aplicației."
-                    ),
-                    itemsEn = listOf(
-                        "Secure data retention between application sessions."
                     )
                 )
             )
