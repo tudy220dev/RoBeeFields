@@ -53,6 +53,7 @@ fun ApiaryDetailBottomSheet(
     appCurrentLat: Double,
     appCurrentLon: Double,
     hives: List<Beehive>,
+    selectedLanguage: String = "Română",
     onDismiss: () -> Unit,
     onAddHiveToApiary: (Beehive) -> Unit,
     onSelectHive: (Beehive) -> Unit,
@@ -62,6 +63,7 @@ fun ApiaryDetailBottomSheet(
     onStartMapPickMode: () -> Unit
 ) {
     val context = LocalContext.current
+    val isEn = selectedLanguage == "English"
     var currentApiaryTitle by remember { mutableStateOf(apiaryName.removePrefix("🏠").trim()) }
     var showAddHiveDialog by remember { mutableStateOf(false) }
     var showEditApiaryDialog by remember { mutableStateOf(false) }
@@ -82,11 +84,17 @@ fun ApiaryDetailBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Stupină: $currentApiaryTitle",
+                    text = if (isEn) "Apiary: $currentApiaryTitle" else "Stupină: $currentApiaryTitle",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    text = String.format(Locale.US, "GPS: %.5f, %.5f | Stupi în stupină: %d", apiaryLatitude, apiaryLongitude, individualHives.size),
+                    text = String.format(
+                        if (isEn) Locale.US else Locale("ro", "RO"),
+                        if (isEn) "GPS: %.5f, %.5f | Hives in apiary: %d" else "GPS: %.5f, %.5f | Stupi în stupină: %d",
+                        apiaryLatitude,
+                        apiaryLongitude,
+                        individualHives.size
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -94,7 +102,6 @@ fun ApiaryDetailBottomSheet(
 
             HorizontalDivider()
 
-            // Quick Actions Bar
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,7 +113,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text("Adaugă", style = MaterialTheme.typography.labelSmall)
+                    Text(if (isEn) "Add" else "Adaugă", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -114,7 +121,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text("Mută", style = MaterialTheme.typography.labelSmall)
+                    Text(if (isEn) "Move" else "Mută", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -122,7 +129,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text("Editează", style = MaterialTheme.typography.labelSmall)
+                    Text(if (isEn) "Edit" else "Editează", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -132,8 +139,8 @@ fun ApiaryDetailBottomSheet(
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, payload)
                         }
-                        context.startActivity(Intent.createChooser(shareIntent, "Trimite Stupină P2P"))
-                        Toast.makeText(context, "Telemetrie Stupină P2P generată!", Toast.LENGTH_SHORT).show()
+                        context.startActivity(Intent.createChooser(shareIntent, if (isEn) "Share Apiary P2P" else "Trimite Stupină P2P"))
+                        Toast.makeText(context, if (isEn) "Apiary P2P data generated!" else "Telemetrie Stupină P2P generată!", Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.weight(0.9f)
                 ) {
@@ -143,7 +150,7 @@ fun ApiaryDetailBottomSheet(
             }
 
             Text(
-                text = "Lista Stupilor din această Stupină:",
+                text = if (isEn) "List of Hives in this Apiary:" else "Lista Stupilor din această Stupină:",
                 style = MaterialTheme.typography.labelMedium,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
@@ -166,11 +173,11 @@ fun ApiaryDetailBottomSheet(
                             ListItem(
                                 headlineContent = { Text("🐝 $cleanHiveName") },
                                 supportingContent = {
-                                    Text("Status: ${hive.status.toDisplayName("Română")} ${if (hive.notes.isNotBlank()) "| " + hive.notes else ""}")
+                                    Text("Status: ${hive.status.toDisplayName(selectedLanguage)} ${if (hive.notes.isNotBlank()) "| " + hive.notes else ""}")
                                 },
                                 trailingContent = {
                                     Button(onClick = { onSelectHive(hive) }) {
-                                        Text("Opțiuni")
+                                        Text(if (isEn) "Options" else "Opțiuni")
                                     }
                                 }
                             )
@@ -185,7 +192,7 @@ fun ApiaryDetailBottomSheet(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Text(
-                        text = "Niciun stup adăugat încă în această stupină.",
+                        text = if (isEn) "No hives added yet in this apiary." else "Niciun stup adăugat încă în această stupină.",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -207,18 +214,19 @@ fun ApiaryDetailBottomSheet(
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(end = 6.dp)
                 )
-                Text("Șterge Toată Stupina și Stupii", color = MaterialTheme.colorScheme.error)
+                Text(if (isEn) "Delete Entire Apiary and Hives" else "Șterge Toată Stupina și Stupii", color = MaterialTheme.colorScheme.error)
             }
         }
     }
 
     if (showMoveDialog) {
         MoveLocationDialog(
-            elementName = "Stupină $currentApiaryTitle",
+            elementName = if (isEn) "Apiary $currentApiaryTitle" else "Stupină $currentApiaryTitle",
             currentLat = apiaryLatitude,
             currentLon = apiaryLongitude,
             appCurrentLat = appCurrentLat,
             appCurrentLon = appCurrentLon,
+            selectedLanguage = selectedLanguage,
             onDismiss = { showMoveDialog = false },
             onUpdateCoords = { lat: Double, lon: Double ->
                 onUpdateCoords(lat, lon)
@@ -239,6 +247,7 @@ fun ApiaryDetailBottomSheet(
             apiaryName = currentApiaryTitle,
             latitude = apiaryLatitude,
             longitude = apiaryLongitude,
+            selectedLanguage = selectedLanguage,
             onDismiss = { showAddHiveDialog = false },
             onSaveHive = { newHive ->
                 onAddHiveToApiary(newHive)
@@ -250,6 +259,7 @@ fun ApiaryDetailBottomSheet(
     if (showEditApiaryDialog) {
         EditApiaryDialog(
             currentName = currentApiaryTitle,
+            selectedLanguage = selectedLanguage,
             onDismiss = { showEditApiaryDialog = false },
             onSave = { newName ->
                 currentApiaryTitle = newName
@@ -263,14 +273,16 @@ fun ApiaryDetailBottomSheet(
 @Composable
 fun EditApiaryDialog(
     currentName: String,
+    selectedLanguage: String = "Română",
     onDismiss: () -> Unit,
     onSave: (String) -> Unit
 ) {
+    val isEn = selectedLanguage == "English"
     var name by remember { mutableStateOf(currentName) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Editează Stupină") },
+        title = { Text(if (isEn) "Edit Apiary" else "Editează Stupină") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -279,7 +291,7 @@ fun EditApiaryDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Nume NOU Stupină") },
+                    label = { Text(if (isEn) "NEW Apiary Name" else "Nume NOU Stupină") },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -292,12 +304,12 @@ fun EditApiaryDialog(
                     }
                 }
             ) {
-                Text("Salvează")
+                Text(if (isEn) "Save" else "Salvează")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Anulează")
+                Text(if (isEn) "Cancel" else "Anulează")
             }
         }
     )
@@ -309,15 +321,17 @@ fun AddHiveToApiaryDialog(
     apiaryName: String,
     latitude: Double,
     longitude: Double,
+    selectedLanguage: String = "Română",
     onDismiss: () -> Unit,
     onSaveHive: (Beehive) -> Unit
 ) {
+    val isEn = selectedLanguage == "English"
     var hiveNumber by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("🐝 Adaugă Stup în $apiaryName") },
+        title = { Text(if (isEn) "🐝 Add Hive in $apiaryName" else "🐝 Adaugă Stup în $apiaryName") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -326,13 +340,13 @@ fun AddHiveToApiaryDialog(
                 OutlinedTextField(
                     value = hiveNumber,
                     onValueChange = { hiveNumber = it },
-                    label = { Text("Număr Stup (ex. Stup #1)") },
+                    label = { Text(if (isEn) "Hive Number (e.g. Hive #1)" else "Număr Stup (ex. Stup #1)") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Note / Stare Familie") },
+                    label = { Text(if (isEn) "Notes / Colony Status" else "Note / Stare Familie") },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -353,12 +367,12 @@ fun AddHiveToApiaryDialog(
                     }
                 }
             ) {
-                Text("Adaugă în Stupină")
+                Text(if (isEn) "Add to Apiary" else "Adaugă în Stupină")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Anulează")
+                Text(if (isEn) "Cancel" else "Anulează")
             }
         }
     )

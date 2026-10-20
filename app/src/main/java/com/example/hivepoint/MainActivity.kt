@@ -312,7 +312,7 @@ fun HivePointApp(
                     Spacer(modifier = Modifier.weight(1f))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     Text(
-                        text = "RoBee Fields v0.4.1 (Field Edition)",
+                        text = "RoBee Fields v0.4.2 (Field Edition)",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp, bottom = 16.dp)
@@ -585,6 +585,7 @@ fun MapScreenWithDrawer(
                     hive = selected,
                     appCurrentLat = currentLat,
                     appCurrentLon = currentLon,
+                    selectedLanguage = selectedLanguage,
                     onDismiss = { selectedHiveForMenu = null },
                     onUpdateHive = { updated ->
                         onUpdateHive(updated)
@@ -598,7 +599,7 @@ fun MapScreenWithDrawer(
                         val updated = selected.copy(latitude = lat, longitude = lon, updatedAt = System.currentTimeMillis())
                         onUpdateHive(updated)
                         selectedHiveForMenu = null
-                        Toast.makeText(context, "Coordonate stup actualizate!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, if (selectedLanguage == "English") "Hive coordinates updated!" else "Coordonate stup actualizate!", Toast.LENGTH_SHORT).show()
                     },
                     onStartMapPickMode = {
                         elementToMove = selected
@@ -622,6 +623,7 @@ fun MapScreenWithDrawer(
                     appCurrentLat = currentLat,
                     appCurrentLon = currentLon,
                     hives = hivesInApiary,
+                    selectedLanguage = selectedLanguage,
                     onDismiss = { selectedApiaryForMenu = null },
                     onAddHiveToApiary = { newHiveInApiary ->
                         onAddHive(newHiveInApiary)
@@ -643,7 +645,7 @@ fun MapScreenWithDrawer(
                         val updated = apiaryHive.copy(latitude = lat, longitude = lon, updatedAt = System.currentTimeMillis())
                         onUpdateHive(updated)
                         selectedApiaryForMenu = null
-                        Toast.makeText(context, "Coordonate stupină actualizate!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, if (selectedLanguage == "English") "Apiary coordinates updated!" else "Coordonate stupină actualizate!", Toast.LENGTH_SHORT).show()
                     },
                     onStartMapPickMode = {
                         elementToMove = apiaryHive

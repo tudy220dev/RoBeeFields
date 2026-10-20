@@ -40,6 +40,42 @@ data class ChangelogEntry(
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
+            version = "v0.4.2",
+            dateRo = "20 Oct 2026",
+            dateEn = "20 Oct 2026",
+            titleRo = "RoBee Fields 0.4.2 (Suport Bilingv Extins în Meniuri)",
+            titleEn = "RoBee Fields 0.4.2 (Extended Multilingual Menu Support)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Extinderea suportului bilingv complet (Română / Engleză) în toate meniurile stupilor, stupinelor și ferestrele de dialog ale aplicației.",
+            descriptionEn = "Extended full bilingual support (Romanian / English) across all hive, apiary, and dialog menus.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
+                        "Suport bilingv complet (Română/Engleză) pentru toate meniurile stupilor, stupinelor și ferestrele de inspecție/editare.",
+                        "Comutare dinamică instantanee a limbii în întreaga interfață a aplicației."
+                    ),
+                    itemsEn = listOf(
+                        "Full bilingual support (Romanian/English) for all hive, apiary, and inspection/edit dialog menus.",
+                        "Instant dynamic language switching across the entire application interface."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
+                        "Optimizări de interfață utilizator și actualizarea versiunii aplicației la v0.4.2."
+                    ),
+                    itemsEn = listOf(
+                        "UI optimizations and app version updated to v0.4.2."
+                    )
+                )
+            )
+        ),
+        ChangelogEntry(
             version = "v0.4.1",
             dateRo = "20 Oct 2026",
             dateEn = "20 Oct 2026",
@@ -61,16 +97,6 @@ object ChangelogRepository {
                     itemsEn = listOf(
                         "Relocation dialog (MoveLocationDialog) for hives and apiaries featuring: 1) Map tap placement, 2) Current phone GPS location, and 3) Manual GPS coordinates (Lat/Long).",
                         "Automatic map pin position update and instant persistence in local SQLite database."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Optimizarea experienței de utilizare pe teren și actualizarea versiunii aplicației la v0.4.1."
-                    ),
-                    itemsEn = listOf(
-                        "Optimized field user experience and app version updated to v0.4.1."
                     )
                 )
             )
@@ -100,16 +126,6 @@ object ChangelogRepository {
                         "CSV Export & Import functionality allowing folder/location selection and file choice.",
                         "Detailed inspection history persistently saved in SQLite database."
                     )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Optimizarea fluxului de lucru pentru apicultori pe teren fără conexiune internet."
-                    ),
-                    itemsEn = listOf(
-                        "Optimized workflow for beekeepers in the field without internet connection."
-                    )
                 )
             )
         ),
@@ -130,33 +146,11 @@ object ChangelogRepository {
                     titleEn = "New",
                     itemsRo = listOf(
                         "Suport bilingv (Română și Engleză) pentru toate intrările din istoricul Changelog.",
-                        "Tratarea dinamică a schimbării limbii în ecranul Despre.",
-                        "Actualizare versiune aplicație la v0.3.2."
+                        "Tratarea dinamică a schimbării limbii în ecranul Despre."
                     ),
                     itemsEn = listOf(
                         "Bilingual support (Romanian and English) for all Changelog history entries.",
-                        "Dynamic language switching handling on the About screen.",
-                        "App version updated to v0.3.2."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Rezolvat",
-                    titleEn = "Fixed",
-                    itemsRo = listOf(
-                        "Remedierea problemei de sincronizare a limbii în ecranul Changelog la schimbarea setărilor."
-                    ),
-                    itemsEn = listOf(
-                        "Fixed language synchronization issue in the Changelog screen when changing settings."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Ajustări de layout și vizualizare pentru suportul multilingv în interfața utilizator."
-                    ),
-                    itemsEn = listOf(
-                        "Layout and visualization adjustments for multilingual support in the UI."
+                        "Dynamic language switching handling on the About screen."
                     )
                 )
             )
@@ -184,16 +178,6 @@ object ChangelogRepository {
                         "New Changelog section in the About screen with detailed version history.",
                         "Integration of official RoBee Fields logo as the app icon."
                     )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Optimizări ale interfeței grafice (UI) pentru o utilizare mai facilă pe teren."
-                    ),
-                    itemsEn = listOf(
-                        "UI optimizations for easier usage in the field."
-                    )
                 )
             )
         ),
@@ -219,18 +203,6 @@ object ChangelogRepository {
                     itemsEn = listOf(
                         "Offline vector map engine integration with Mapsforge and osmdroid.",
                         "Support for downloading and archiving regional offline map packages."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Acuratețe crescută a localizării GPS și optimizare consum baterie pe teren.",
-                        "Sistem P2P SMS/mesh îmbunătățit pentru schimb descentralizat de date."
-                    ),
-                    itemsEn = listOf(
-                        "Increased GPS localization accuracy and battery consumption optimization in the field.",
-                        "Improved P2P SMS/mesh system for decentralized data exchange."
                     )
                 )
             )
@@ -258,16 +230,6 @@ object ChangelogRepository {
                         "HiveSerializer for extreme text message compression.",
                         "SmsReceiver & SmsSender for automated hive import/export via SMS."
                     )
-                ),
-                ChangelogSection(
-                    titleRo = "Actualizat",
-                    titleEn = "Updated",
-                    itemsRo = listOf(
-                        "Reducerea dimensiunii datelor cu peste 70% pentru transmisii SMS rapide."
-                    ),
-                    itemsEn = listOf(
-                        "Reduced data payload size by over 70% for rapid SMS transmissions."
-                    )
                 )
             )
         ),
@@ -288,13 +250,11 @@ object ChangelogRepository {
                     titleEn = "New",
                     itemsRo = listOf(
                         "Bază de date locală SQLite (HiveDbHelper).",
-                        "Vizualizare hărți de bază și adăugare pin-uri stupi.",
-                        "Meniu de navigare și setări de bază."
+                        "Vizualizare hărți de bază și adăugare pin-uri stupi."
                     ),
                     itemsEn = listOf(
                         "Local SQLite database (HiveDbHelper).",
-                        "Basic map rendering and hive pin placement.",
-                        "Navigation menu and basic settings."
+                        "Basic map rendering and hive pin placement."
                     )
                 )
             )
