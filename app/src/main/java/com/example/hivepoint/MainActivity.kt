@@ -7,6 +7,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -52,6 +53,7 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -310,7 +312,7 @@ fun HivePointApp(
                     Spacer(modifier = Modifier.weight(1f))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     Text(
-                        text = "RoBee Fields v0.4.0 (Field Edition)",
+                        text = "RoBee Fields v0.4.1 (Field Edition)",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp, bottom = 16.dp)
@@ -376,6 +378,7 @@ fun MapScreenWithDrawer(
     var selectedApiaryForMenu by remember { mutableStateOf<Beehive?>(null) }
     var longClickCoords by remember { mutableStateOf<Pair<Double, Double>?>(null) }
     var showGpsAddDialog by remember { mutableStateOf(false) }
+    var elementToMove by remember { mutableStateOf<Beehive?>(null) }
 
     fun updateLocation() {
         try {
@@ -478,9 +481,41 @@ fun MapScreenWithDrawer(
                     }
                 },
                 onMapLongClick = { lat, lon ->
-                    longClickCoords = Pair(lat, lon)
+                    if (elementToMove != null) {
+                        val updated = elementToMove!!.copy(
+                            latitude = lat,
+                            longitude = lon,
+                            updatedAt = System.currentTimeMillis()
+                        )
+                        onUpdateHive(updated)
+                        Toast.makeText(context, "Locație actualizată pe hartă pentru ${elementToMove!!.hiveNumber}!", Toast.LENGTH_SHORT).show()
+                        elementToMove = null
+                    } else {
+                        longClickCoords = Pair(lat, lon)
+                    }
                 }
             )
+
+            elementToMove?.let { moving ->
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("📍 Atinge pe hartă noua locație pentru: ${moving.hiveNumber}")
+                        TextButton(onClick = { elementToMove = null }) {
+                            Text("Anulează")
+                        }
+                    }
+                }
+            }
 
             Card(
                 modifier = Modifier
@@ -548,6 +583,8 @@ fun MapScreenWithDrawer(
             selectedHiveForMenu?.let { selected ->
                 HiveActionBottomSheet(
                     hive = selected,
+                    appCurrentLat = currentLat,
+                    appCurrentLon = currentLon,
                     onDismiss = { selectedHiveForMenu = null },
                     onUpdateHive = { updated ->
                         onUpdateHive(updated)
@@ -556,6 +593,15 @@ fun MapScreenWithDrawer(
                     onDeleteHive = { id ->
                         onDeleteHive(id)
                         selectedHiveForMenu = null
+                    },
+                    onUpdateCoords = { lat, lon ->
+                        val updated = selected.copy(latitude = lat, longitude = lon, updatedAt = System.currentTimeMillis())
+                        onUpdateHive(updated)
+                        selectedHiveForMenu = null
+                        Toast.makeText(context, "Coordonate stup actualizate!", Toast.LENGTH_SHORT).show()
+                    },
+                    onStartMapPickMode = {
+                        elementToMove = selected
                     }
                 )
             }
@@ -573,6 +619,8 @@ fun MapScreenWithDrawer(
                     apiaryName = rawApiaryName,
                     apiaryLatitude = apiaryHive.latitude ?: currentLat,
                     apiaryLongitude = apiaryHive.longitude ?: currentLon,
+                    appCurrentLat = currentLat,
+                    appCurrentLon = currentLon,
                     hives = hivesInApiary,
                     onDismiss = { selectedApiaryForMenu = null },
                     onAddHiveToApiary = { newHiveInApiary ->
@@ -590,6 +638,15 @@ fun MapScreenWithDrawer(
                         onDeleteHive(apiaryHive.id)
                         hivesInApiary.forEach { onDeleteHive(it.id) }
                         selectedApiaryForMenu = null
+                    },
+                    onUpdateCoords = { lat, lon ->
+                        val updated = apiaryHive.copy(latitude = lat, longitude = lon, updatedAt = System.currentTimeMillis())
+                        onUpdateHive(updated)
+                        selectedApiaryForMenu = null
+                        Toast.makeText(context, "Coordonate stupină actualizate!", Toast.LENGTH_SHORT).show()
+                    },
+                    onStartMapPickMode = {
+                        elementToMove = apiaryHive
                     }
                 )
             }

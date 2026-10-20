@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Visibility
@@ -76,9 +77,7 @@ import com.example.hivepoint.model.InspectionLog
 import com.example.hivepoint.model.QueenState
 import com.example.hivepoint.model.Temperament
 import com.example.hivepoint.util.HiveSerializer
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -104,9 +103,13 @@ fun rememberPhotoBitmap(photoUriStr: String?): ImageBitmap? {
 @Composable
 fun HiveActionBottomSheet(
     hive: Beehive,
+    appCurrentLat: Double,
+    appCurrentLon: Double,
     onDismiss: () -> Unit,
     onUpdateHive: (Beehive) -> Unit,
-    onDeleteHive: (String) -> Unit
+    onDeleteHive: (String) -> Unit,
+    onUpdateCoords: (Double, Double) -> Unit,
+    onStartMapPickMode: () -> Unit
 ) {
     val context = LocalContext.current
     val dbHelper = remember { HiveDbHelper(context) }
@@ -118,6 +121,7 @@ fun HiveActionBottomSheet(
     var showGalleryDialog by remember { mutableStateOf(false) }
     var showCreateLogDialog by remember { mutableStateOf(false) }
     var showViewLogsDialog by remember { mutableStateOf(false) }
+    var showMoveDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(hive.id) {
         logs = dbHelper.getInspectionLogsForHive(hive.id)
@@ -131,7 +135,6 @@ fun HiveActionBottomSheet(
         "Niciun jurnal înregistrat încă."
     }
 
-    // Multi-photo picker launcher
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetMultipleContents()
     ) { uris: List<Uri> ->
@@ -191,7 +194,19 @@ fun HiveActionBottomSheet(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // 1. Vezi Galeria Foto (If photos attached)
+            // Mută Stupul
+            ListItem(
+                headlineContent = { Text("Mută Stupul (Move Location)") },
+                supportingContent = { Text("Schimbă poziția GPS pe hartă sau prin coordonate") },
+                leadingContent = { Icon(Icons.Default.MyLocation, contentDescription = null) },
+                modifier = Modifier.fillMaxWidth(),
+                trailingContent = {
+                    TextButton(onClick = { showMoveDialog = true }) {
+                        Text("Mută")
+                    }
+                }
+            )
+
             if (hive.photoUris.isNotEmpty()) {
                 ListItem(
                     headlineContent = { Text("Galerie Foto (${hive.photoUris.size} poze) 📸", color = MaterialTheme.colorScheme.primary) },
@@ -206,7 +221,6 @@ fun HiveActionBottomSheet(
                 )
             }
 
-            // 2. Vezi Stup
             ListItem(
                 headlineContent = { Text("Vezi Stup / Detalii Complete") },
                 supportingContent = { Text("Afișează detaliile complete ale stupului") },
@@ -219,7 +233,6 @@ fun HiveActionBottomSheet(
                 }
             )
 
-            // 3. Edit
             ListItem(
                 headlineContent = { Text("Editează Stup") },
                 supportingContent = { Text("Schimbă denumirea, starea sau notele stupului") },
@@ -232,7 +245,6 @@ fun HiveActionBottomSheet(
                 }
             )
 
-            // 4. Add Photos
             ListItem(
                 headlineContent = { Text(if (hive.photoUris.isNotEmpty()) "Adaugă Mai Multe Poze" else "Adaugă Poze Stup") },
                 supportingContent = { Text(if (hive.photoUris.isNotEmpty()) "${hive.photoUris.size} poze salvate." else "Selectează poze din galerie") },
@@ -245,7 +257,6 @@ fun HiveActionBottomSheet(
                 }
             )
 
-            // 5. Share Hash P2P
             ListItem(
                 headlineContent = { Text("Trimite Hash (SMS / P2P)") },
                 supportingContent = { Text("Generează și trimite codul compact P2P al stupului") },
@@ -269,7 +280,6 @@ fun HiveActionBottomSheet(
                 }
             )
 
-            // 6. Remove
             ListItem(
                 headlineContent = { Text("Șterge Stup", color = MaterialTheme.colorScheme.error) },
                 supportingContent = { Text("Elimină definitiv pinul de pe hartă și din baza de date") },
@@ -287,6 +297,27 @@ fun HiveActionBottomSheet(
                 }
             )
         }
+    }
+
+    if (showMoveDialog) {
+        MoveLocationDialog(
+            elementName = "Stup ${hive.hiveNumber}",
+            currentLat = hive.latitude,
+            currentLon = hive.longitude,
+            appCurrentLat = appCurrentLat,
+            appCurrentLon = appCurrentLon,
+            onDismiss = { showMoveDialog = false },
+            onUpdateCoords = { lat: Double, lon: Double ->
+                onUpdateCoords(lat, lon)
+                showMoveDialog = false
+                onDismiss()
+            },
+            onStartMapPickMode = {
+                showMoveDialog = false
+                onDismiss()
+                onStartMapPickMode()
+            }
+        )
     }
 
     if (showCreateLogDialog) {
@@ -814,7 +845,7 @@ fun HivePhotoGalleryDialog(
                                 if (bitmap != null) {
                                     Image(
                                         bitmap = bitmap,
-                                        contentDescription = "Poză stup",
+                                        contentDescription = "Poză stupină / stup",
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .height(200.dp),
@@ -857,7 +888,9 @@ fun HivePhotoGalleryDialog(
             }
         },
         confirmButton = {
-            Button(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss
+            ) {
                 Text("Închide")
             }
         }
