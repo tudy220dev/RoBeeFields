@@ -11,7 +11,16 @@ enum class HiveStatus {
     UNKNOWN;
 
     fun toDisplayName(language: String = "Română"): String {
-        if (language == "English") return this.name
+        if (language == "English") {
+            return when (this) {
+                STRONG -> "Strong"
+                MEDIUM -> "Medium"
+                WEAK -> "Weak"
+                QUEENLESS -> "Queenless"
+                DEAD -> "Dead"
+                UNKNOWN -> "Unknown"
+            }
+        }
         return when (this) {
             STRONG -> "Puternic"
             MEDIUM -> "Mediu"
@@ -23,19 +32,40 @@ enum class HiveStatus {
     }
 }
 
-enum class QueenState(val displayName: String) {
-    SEEN("Văzută"),
-    EGGS("Semne (ouă proaspete)"),
-    MISSING("Lipsă / Orfan"),
-    QUEEN_CELLS("Botci prezente"),
-    UNKNOWN("Nespecificat")
+enum class QueenState {
+    SEEN,
+    EGGS,
+    MISSING,
+    QUEEN_CELLS,
+    UNKNOWN;
+
+    fun toDisplayName(language: String = "Română"): String {
+        val isEn = language == "English"
+        return when (this) {
+            SEEN -> if (isEn) "Queen Seen" else "Văzută"
+            EGGS -> if (isEn) "Fresh Eggs Seen" else "Semne (ouă proaspete)"
+            MISSING -> if (isEn) "Missing / Queenless" else "Lipsă / Orfan"
+            QUEEN_CELLS -> if (isEn) "Queen Cells Present" else "Botci prezente"
+            UNKNOWN -> if (isEn) "Unspecified" else "Nespecificat"
+        }
+    }
 }
 
-enum class Temperament(val displayName: String) {
-    CALM("Calmă"),
-    NORMAL("Normală"),
-    AGGRESSIVE("Agresivă"),
-    UNKNOWN("Necunoscut")
+enum class Temperament {
+    CALM,
+    NORMAL,
+    AGGRESSIVE,
+    UNKNOWN;
+
+    fun toDisplayName(language: String = "Română"): String {
+        val isEn = language == "English"
+        return when (this) {
+            CALM -> if (isEn) "Calm" else "Calmă"
+            NORMAL -> if (isEn) "Normal" else "Normală"
+            AGGRESSIVE -> if (isEn) "Aggressive" else "Agresivă"
+            UNKNOWN -> if (isEn) "Unknown" else "Necunoscut"
+        }
+    }
 }
 
 data class Apiary(
@@ -58,7 +88,6 @@ data class Beehive(
     val photoUris: List<String> = emptyList(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
-    // Backwards compatibility property getter
     val photoUri: String?
         get() = photoUris.firstOrNull()
 }
