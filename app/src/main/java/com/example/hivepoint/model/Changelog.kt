@@ -40,6 +40,44 @@ data class ChangelogEntry(
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
+            version = "v0.4.3",
+            dateRo = "24 Oct 2026",
+            dateEn = "24 Oct 2026",
+            titleRo = "RoBee Fields 0.4.3 (Optimizare Meniuri & Export CSV)",
+            titleEn = "RoBee Fields 0.4.3 (Menu Optimization & CSV Export)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Actualizare majoră a meniurilor glisante (BottomSheet): limitarea extinderii sub bara de navigare, derulare fluidă fără fluctuații, export/import CSV al stupilor și funcționalitate completă de relocare.",
+            descriptionEn = "Major bottom sheet update: capping sheet expansion under the top app bar, smooth jitter-free scrolling, CSV export/import for hives, and complete relocation functionality.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
+                        "Funcționalitate de Export și Import CSV pentru salvarea și restaurarea datelor din stocarea locală (HiveCsvExporter).",
+                        "Dialog de relocare rapidă (MoveLocationDialog) cu opțiuni pentru GPS curent, selectare pe hartă și coordonate manuale."
+                    ),
+                    itemsEn = listOf(
+                        "CSV Export and Import functionality for backing up and restoring local data (HiveCsvExporter).",
+                        "Quick relocation dialog (MoveLocationDialog) with current GPS, map pick, and manual coordinate options."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
+                        "Limitarea înălțimii maxime a meniurilor glisante (BottomSheet) pentru a preveni suprapunerea peste bara de titlu din partea de sus.",
+                        "Eliminarea fluctuațiilor de mișcare (stutter/jiggle) la extinderea completă a meniurilor prin skipPartiallyExpanded și derulare verticală."
+                    ),
+                    itemsEn = listOf(
+                        "Capped maximum height of bottom sheets to prevent overlapping with the top app bar.",
+                        "Eliminated sliding jitter (stutter/jiggle) when fully expanding bottom sheets via skipPartiallyExpanded and vertical scrolling."
+                    )
+                )
+            )
+        ),
+        ChangelogEntry(
             version = "v0.4.2",
             dateRo = "20 Oct 2026",
             dateEn = "20 Oct 2026",
