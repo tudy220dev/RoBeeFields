@@ -47,6 +47,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -151,10 +152,17 @@ fun HiveActionBottomSheet(
         }
     }
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        modifier = Modifier.padding(top = 84.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp)
         ) {
             Column(
@@ -304,8 +312,8 @@ fun HiveActionBottomSheet(
     if (showMoveDialog) {
         MoveLocationDialog(
             elementName = if (isEn) "Hive ${hive.hiveNumber}" else "Stup ${hive.hiveNumber}",
-            currentLat = hive.latitude,
-            currentLon = hive.longitude,
+            currentLat = hive.latitude ?: appCurrentLat,
+            currentLon = hive.longitude ?: appCurrentLon,
             appCurrentLat = appCurrentLat,
             appCurrentLon = appCurrentLon,
             selectedLanguage = selectedLanguage,
@@ -919,3 +927,111 @@ fun HivePhotoGalleryDialog(
         }
     )
 }
+
+@Composable
+fun MoveLocationDialog(
+    elementName: String,
+    currentLat: Double,
+    currentLon: Double,
+    appCurrentLat: Double,
+    appCurrentLon: Double,
+    selectedLanguage: String = "Română",
+    onDismiss: () -> Unit,
+    onUpdateCoords: (Double, Double) -> Unit,
+    onStartMapPickMode: () -> Unit
+) {
+    val isEn = selectedLanguage == "English"
+    var latText by remember { mutableStateOf(currentLat.toString()) }
+    var lonText by remember { mutableStateOf(currentLon.toString()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(if (isEn) "Move Location: $elementName" else "Mută Poziția: $elementName")
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = if (isEn) "Choose how you want to relocate $elementName:" else "Alege cum dorești să relochezi $elementName:",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                // Option 1: Current GPS Position
+                Button(
+                    onClick = {
+                        onUpdateCoords(appCurrentLat, appCurrentLon)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.MyLocation,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        if (isEn) "Use Current GPS Location" else "Folosește Poz. GPS Curentă"
+                    )
+                }
+
+                // Option 2: Pick on Map
+                OutlinedButton(
+                    onClick = onStartMapPickMode,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        if (isEn) "Pick Position on Map" else "Selectează Poziția pe Hartă"
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
+                // Option 3: Manual Input
+                Text(
+                    text = if (isEn) "Or enter coordinates manually:" else "Sau introdu coordonatele manual:",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                OutlinedTextField(
+                    value = latText,
+                    onValueChange = { latText = it },
+                    label = { Text("Latitude / Latitudine") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = lonText,
+                    onValueChange = { lonText = it },
+                    label = { Text("Longitude / Longitudine") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val lat = latText.toDoubleOrNull()
+                    val lon = lonText.toDoubleOrNull()
+                    if (lat != null && lon != null) {
+                        onUpdateCoords(lat, lon)
+                    }
+                }
+            ) {
+                Text(if (isEn) "Save Coordinates" else "Salvează Coordonatele")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(if (isEn) "Cancel" else "Renunță")
+            }
+        }
+    )
+}
+
