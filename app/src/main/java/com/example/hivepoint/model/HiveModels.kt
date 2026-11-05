@@ -32,6 +32,32 @@ enum class HiveStatus {
     }
 }
 
+enum class BeeRace(val displayNameRo: String, val displayNameEn: String, val scientificName: String) {
+    CARPATICA("Carpatină", "Carpathian", "Apis mellifera carpatica"),
+    CARNICA("Carnica", "Carnica", "Apis mellifera carnica"),
+    BUCKFAST("Buckfast", "Buckfast", "Hybrid Buckfast"),
+    LIGUSTICA("Italiană", "Italian", "Apis mellifera ligustica"),
+    CAUCASICA("Caucaziană", "Caucasian", "Apis mellifera caucasica"),
+    MELLIFERA("Neagră Europeană", "European Dark", "Apis mellifera mellifera"),
+    UNKNOWN("Nespecificat", "Unspecified", "Unknown");
+
+    fun toDisplayName(language: String = "Română"): String {
+        return if (language == "English") displayNameEn else displayNameRo
+    }
+}
+
+enum class SwarmingTendency(val displayNameRo: String, val displayNameEn: String) {
+    NONE("Fără tendințe", "None"),
+    WEAK("Tendințe slabe", "Low tendencies"),
+    STRONG("Foarte puternice", "Strong tendencies"),
+    SUPERSEDURE("Schimbare liniștită", "Quiet supersedure"),
+    UNKNOWN("Nespecificat", "Unspecified");
+
+    fun toDisplayName(language: String = "Română"): String {
+        return if (language == "English") displayNameEn else displayNameRo
+    }
+}
+
 enum class QueenState {
     SEEN,
     EGGS,
@@ -84,6 +110,8 @@ data class Beehive(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val status: HiveStatus = HiveStatus.STRONG,
+    val beeRace: BeeRace = BeeRace.CARPATICA,
+    val swarmingTendency: SwarmingTendency = SwarmingTendency.NONE,
     val notes: String = "",
     val photoUris: List<String> = emptyList(),
     val updatedAt: Long = System.currentTimeMillis()

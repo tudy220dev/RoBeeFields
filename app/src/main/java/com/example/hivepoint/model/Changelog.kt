@@ -40,6 +40,52 @@ data class ChangelogEntry(
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
+            version = "v0.5.0",
+            dateRo = "04 Noi 2026",
+            dateEn = "04 Nov 2026",
+            titleRo = "RoBee Fields 0.5.0 (Ediție Majoră: Inspecții, Rasă, Roit & Export CSV)",
+            titleEn = "RoBee Fields 0.5.0 (Major Edition: Advanced Inspection, Bee Race, Swarming & CSV)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Lansarea versiunii 0.5.0 aduce un set masiv de funcționalități avansate: jurnale de inspecție cu 5 secțiuni, selecția rasei de albine, tendințe de roit, mutare avansată pe hartă/GPS, export/import CSV și suport bilingv complet.",
+            descriptionEn = "Version 0.5.0 brings a massive set of advanced features: inspection logs with 5 sections, bee race selection, swarming tendencies, advanced map/GPS relocation, CSV export/import, and full bilingual support.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
+                        "Jurnale de inspecție pe teren cu 5 secțiuni intuitive (Starea Reginei, Puterea Familiei cu controloare +/-, Intervenții & Tratamente, Comportament și Notițe rapide).",
+                        "Selecția rasei de albine (Carpatină, Carnica, Buckfast, Italiană, Caucaziană, Neagră Europeană).",
+                        "Selector pentru tendințele de roit (Fără tendințe, Tendințe slabe, Foarte puternice, Schimbare liniștită).",
+                        "Funcționalitate de mutare a stupilor și stupinelor prin 3 metode: Click pe hartă, Locația curentă GPS sau Coordonate manuale.",
+                        "Export și Import complet de date în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
+                        "Integrare directă cu prognoza meteo Ventusky pentru fiecare stupină.",
+                        "Suport bilingv complet (Română și Engleză) în toate meniurile stupilor, stupinelor și dialogurile aplicației."
+                    ),
+                    itemsEn = listOf(
+                        "Field inspection logs with 5 intuitive sections (Queen Status, Colony Strength with +/- counters, Interventions & Treatments, Temperament, Quick Notes).",
+                        "Bee race / type selection (Carpathian, Carnica, Buckfast, Italian, Caucasian, European Dark).",
+                        "Swarming tendency selector (None, Low tendencies, Strong tendencies, Quiet supersedure).",
+                        "Hive and apiary relocation via 3 methods: Map tap, Current GPS location, or Manual coordinates.",
+                        "Complete CSV Export & Import functionality allowing custom folder/location selection.",
+                        "Direct integration with Ventusky weather forecast for each apiary.",
+                        "Full bilingual support (Romanian and English) across all hive, apiary, and dialog menus."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
+                        "Optimizarea performanței bazei de date SQLite (versiunea 4) și îmbunătățirea experienței de utilizare pe teren."
+                    ),
+                    itemsEn = listOf(
+                        "Optimized SQLite database performance (version 4) and enhanced field user experience."
+                    )
+                )
+            )
+        ),
+        ChangelogEntry(
             version = "v0.4.2",
             dateRo = "20 Oct 2026",
             dateEn = "20 Oct 2026",
@@ -61,16 +107,6 @@ object ChangelogRepository {
                     itemsEn = listOf(
                         "Full bilingual support (Romanian/English) for all hive, apiary, and inspection/edit dialog menus.",
                         "Instant dynamic language switching across the entire application interface."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Optimizări de interfață utilizator și actualizarea versiunii aplicației la v0.4.2."
-                    ),
-                    itemsEn = listOf(
-                        "UI optimizations and app version updated to v0.4.2."
                     )
                 )
             )

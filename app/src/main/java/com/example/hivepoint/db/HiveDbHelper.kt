@@ -4,10 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.example.hivepoint.model.BeeRace
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
 import com.example.hivepoint.model.InspectionLog
 import com.example.hivepoint.model.QueenState
+import com.example.hivepoint.model.SwarmingTendency
 import com.example.hivepoint.model.Temperament
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,7 +18,7 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
 
     companion object {
         private const val DATABASE_NAME = "robeefields_hives.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 4
 
         private const val TABLE_HIVES = "beehives"
         private const val COL_ID = "id"
@@ -25,6 +27,8 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
         private const val COL_LATITUDE = "latitude"
         private const val COL_LONGITUDE = "longitude"
         private const val COL_STATUS = "status"
+        private const val COL_BEE_RACE = "bee_race"
+        private const val COL_SWARMING = "swarming_tendency"
         private const val COL_UPDATED_AT = "updated_at"
         private const val COL_NOTES = "notes"
         private const val COL_PHOTO_URI = "photo_uri"
@@ -54,6 +58,8 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
                 $COL_LATITUDE REAL,
                 $COL_LONGITUDE REAL,
                 $COL_STATUS TEXT,
+                $COL_BEE_RACE TEXT,
+                $COL_SWARMING TEXT,
                 $COL_UPDATED_AT INTEGER,
                 $COL_NOTES TEXT,
                 $COL_PHOTO_URI TEXT
@@ -99,6 +105,8 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
             val latIdx = c.getColumnIndexOrThrow(COL_LATITUDE)
             val lonIdx = c.getColumnIndexOrThrow(COL_LONGITUDE)
             val statusIdx = c.getColumnIndexOrThrow(COL_STATUS)
+            val raceIdx = c.getColumnIndex(COL_BEE_RACE)
+            val swarmingIdx = c.getColumnIndex(COL_SWARMING)
             val updatedIdx = c.getColumnIndexOrThrow(COL_UPDATED_AT)
             val notesIdx = c.getColumnIndexOrThrow(COL_NOTES)
             val photoIdx = c.getColumnIndexOrThrow(COL_PHOTO_URI)
@@ -109,6 +117,26 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
                     HiveStatus.valueOf(statusStr)
                 } catch (e: Exception) {
                     HiveStatus.STRONG
+                }
+
+                val beeRaceEnum = if (raceIdx != -1 && !c.isNull(raceIdx)) {
+                    try {
+                        BeeRace.valueOf(c.getString(raceIdx))
+                    } catch (e: Exception) {
+                        BeeRace.CARPATICA
+                    }
+                } else {
+                    BeeRace.CARPATICA
+                }
+
+                val swarmingEnum = if (swarmingIdx != -1 && !c.isNull(swarmingIdx)) {
+                    try {
+                        SwarmingTendency.valueOf(c.getString(swarmingIdx))
+                    } catch (e: Exception) {
+                        SwarmingTendency.NONE
+                    }
+                } else {
+                    SwarmingTendency.NONE
                 }
 
                 val photoRaw = c.getString(photoIdx)
@@ -126,6 +154,8 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
                         latitude = if (c.isNull(latIdx)) null else c.getDouble(latIdx),
                         longitude = if (c.isNull(lonIdx)) null else c.getDouble(lonIdx),
                         status = statusEnum,
+                        beeRace = beeRaceEnum,
+                        swarmingTendency = swarmingEnum,
                         updatedAt = c.getLong(updatedIdx),
                         notes = c.getString(notesIdx) ?: "",
                         photoUris = photoUris
@@ -145,6 +175,8 @@ class HiveDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, 
             put(COL_LATITUDE, hive.latitude)
             put(COL_LONGITUDE, hive.longitude)
             put(COL_STATUS, hive.status.name)
+            put(COL_BEE_RACE, hive.beeRace.name)
+            put(COL_SWARMING, hive.swarmingTendency.name)
             put(COL_UPDATED_AT, hive.updatedAt)
             put(COL_NOTES, hive.notes)
             put(COL_PHOTO_URI, hive.photoUris.joinToString(";"))
