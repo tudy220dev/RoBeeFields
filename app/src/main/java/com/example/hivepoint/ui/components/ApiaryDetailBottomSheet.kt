@@ -19,8 +19,6 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material3.AlertDialog
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,11 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
@@ -73,7 +72,6 @@ fun ApiaryDetailBottomSheet(
     var showAddHiveDialog by remember { mutableStateOf(false) }
     var showEditApiaryDialog by remember { mutableStateOf(false) }
     var showMoveDialog by remember { mutableStateOf(false) }
-    var Weatherloc by remember { mutableStateOf(false) }
 
     val individualHives = hives.filterNot { hive ->
         hive.hiveNumber.removePrefix("🏠").trim().equals(currentApiaryTitle, ignoreCase = true)
@@ -89,68 +87,85 @@ fun ApiaryDetailBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp)
         ) {
+            // Header Info
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = if (isEn) "Apiary: $currentApiaryTitle" else "Stupină: $currentApiaryTitle",
-                    style = MaterialTheme.typography.titleLarge
+                    text = if (isEn) "🏠 Apiary: $currentApiaryTitle" else "🏠 Stupină: $currentApiaryTitle",
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = String.format(
                         if (isEn) Locale.US else Locale("ro", "RO"),
-                        if (isEn) "GPS: %.5f, %.5f | Hives in apiary: %d" else "GPS: %.5f, %.5f | Stupi în stupină: %d",
+                        if (isEn) "GPS: %.5f, %.5f | Hives count: %d" else "GPS: %.5f, %.5f | Stupi în stupină: %d",
                         apiaryLatitude,
                         apiaryLongitude,
                         individualHives.size
                     ),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            HorizontalDivider()
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
 
+            // Action Buttons - Row 1
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = { showAddHiveDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text(if (isEn) "Add" else "Adaugă", style = MaterialTheme.typography.labelSmall)
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                    Text(if (isEn) "Add Hive" else "Adaugă Stup", style = MaterialTheme.typography.labelMedium)
                 }
 
+                OutlinedButton(
+                    onClick = {
+                        val url = String.format(Locale.US, "https://www.ventusky.com/?p=%.5f;%.5f;11", apiaryLatitude, apiaryLongitude)
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        try {
+                            context.startActivity(intent)
+                        } catch (_: Exception) {
+                            Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(imageVector = Icons.Default.WbCloudy, contentDescription = null, modifier = Modifier.padding(end = 4.dp), tint = MaterialTheme.colorScheme.primary)
+                    Text(if (isEn) "Weather (Ventusky)" else "Vreme (Ventusky 🌤️)", style = MaterialTheme.typography.labelMedium)
+                }
+            }
+
+            // Action Buttons - Row 2
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 OutlinedButton(
                     onClick = { showMoveDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text(if (isEn) "Move" else "Mută", style = MaterialTheme.typography.labelSmall)
-                }
-
-                OutlinedButton(
-                    onClick = { Weatherloc = true },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Icon(imageVector = Icons.Default.WbCloudy, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text(if (isEn) "Weather" else "Vreme", style = MaterialTheme.typography.labelSmall)
+                    Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                    Text(if (isEn) "Move" else "Mută GPS", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
                     onClick = { showEditApiaryDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text(if (isEn) "Edit" else "Editează", style = MaterialTheme.typography.labelSmall)
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                    Text(if (isEn) "Edit Name" else "Editează", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -163,25 +178,28 @@ fun ApiaryDetailBottomSheet(
                         context.startActivity(Intent.createChooser(shareIntent, if (isEn) "Share Apiary P2P" else "Trimite Stupină P2P"))
                         Toast.makeText(context, if (isEn) "Apiary P2P data generated!" else "Telemetrie Stupină P2P generată!", Toast.LENGTH_SHORT).show()
                     },
-                    modifier = Modifier.weight(0.9f)
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
-                    Text("P2P", style = MaterialTheme.typography.labelSmall)
+                    Icon(imageVector = Icons.Default.Share, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
+                    Text("P2P SMS", style = MaterialTheme.typography.labelSmall)
                 }
             }
 
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             Text(
-                text = if (isEn) "List of Hives in this Apiary:" else "Lista Stupilor din această Stupină:",
-                style = MaterialTheme.typography.labelMedium,
+                text = if (isEn) "Hives in this Apiary:" else "Lista Stupilor din această Stupină:",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
 
+            // Scrollable Hive List
             if (individualHives.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(260.dp)
-                        .padding(horizontal = 8.dp)
+                        .height(280.dp)
+                        .padding(horizontal = 12.dp)
                 ) {
                     items(individualHives) { hive ->
                         val cleanHiveName = hive.hiveNumber.removePrefix("🏠").trim()
@@ -192,7 +210,7 @@ fun ApiaryDetailBottomSheet(
                             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             ListItem(
-                                headlineContent = { Text("🐝 $cleanHiveName") },
+                                headlineContent = { Text("🐝 $cleanHiveName", style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)) },
                                 supportingContent = {
                                     Text("Status: ${hive.status.toDisplayName(selectedLanguage)} ${if (hive.notes.isNotBlank()) "| " + hive.notes else ""}")
                                 },
@@ -213,7 +231,7 @@ fun ApiaryDetailBottomSheet(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Text(
-                        text = if (isEn) "No hives added yet in this apiary." else "Niciun stup adăugat încă în această stupină.",
+                        text = if (isEn) "No hives added yet in this apiary. Click 'Add Hive' above to register the first hive!" else "Niciun stup adăugat încă în această stupină. Apasă pe 'Adaugă Stup' mai sus pentru a înregistra primul stup!",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -260,17 +278,6 @@ fun ApiaryDetailBottomSheet(
                 onStartMapPickMode()
             }
         )
-    }
-
-    if (Weatherloc) {
-        val url = String.format(Locale.US, "https://www.ventusky.com/?p=%.5f;%.5f;11", apiaryLatitude, apiaryLongitude)
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        try {
-            context.startActivity(intent)
-        } catch (_: Exception) {
-            Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
-        }
-        Weatherloc = false
     }
 
     if (showAddHiveDialog) {

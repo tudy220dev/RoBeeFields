@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -214,6 +215,30 @@ fun HiveActionBottomSheet(
                 trailingContent = {
                     TextButton(onClick = { showMoveDialog = true }) {
                         Text(if (isEn) "Move" else "Mută")
+                    }
+                }
+            )
+
+            ListItem(
+                headlineContent = { Text(if (isEn) "Weather Forecast (Ventusky 🌤️)" else "Prognoză Meteo (Ventusky 🌤️)") },
+                supportingContent = { Text(if (isEn) "Open live weather forecast at hive coordinates" else "Deschide prognoza meteo live pe hartă la coordonatele stupului") },
+                leadingContent = { Icon(Icons.Default.WbCloudy, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                modifier = Modifier.fillMaxWidth(),
+                trailingContent = {
+                    Button(
+                        onClick = {
+                            val lat = hive.latitude ?: appCurrentLat
+                            val lon = hive.longitude ?: appCurrentLon
+                            val url = String.format(Locale.US, "https://www.ventusky.com/?p=%.5f;%.5f;11", lat, lon)
+                            val viewIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            try {
+                                context.startActivity(viewIntent)
+                            } catch (_: Exception) {
+                                Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    ) {
+                        Text(if (isEn) "Weather" else "Vreme")
                     }
                 }
             )
