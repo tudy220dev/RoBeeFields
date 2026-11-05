@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -76,10 +79,17 @@ fun ApiaryDetailBottomSheet(
         hive.hiveNumber.removePrefix("🏠").trim().equals(currentApiaryTitle, ignoreCase = true)
     }
 
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        modifier = Modifier.padding(top = 84.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp)
         ) {
             Column(
