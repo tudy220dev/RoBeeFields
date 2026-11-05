@@ -40,6 +40,42 @@ data class ChangelogEntry(
 object ChangelogRepository {
     val entries = listOf(
         ChangelogEntry(
+            version = "v0.5.1",
+            dateRo = "05 Noi 2026",
+            dateEn = "05 Nov 2026",
+            titleRo = "RoBee Fields 0.5.1 (Integrare Meteo Ventusky & Remediere Meniu Stupine)",
+            titleEn = "RoBee Fields 0.5.1 (Ventusky Weather Integration & Apiary Menu Fix)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Versiunea 0.5.1 adaugă prognoza meteo Ventusky în meniul fiecărui stup individual și remediază afișarea textului și layout-ul în meniul stupinelor.",
+            descriptionEn = "Version 0.5.1 adds Ventusky live weather forecast to individual hive menus and fixes text formatting and layout issues in the apiary menu.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    itemsRo = listOf(
+                        "Integrarea prognozei meteo live Ventusky pentru fiecare stup individual și stupină, cu navigare directă pe hartă la nivel de zoom 11.",
+                        "Refacerea completă a meniului de detaliu al stupinei cu structură organizată pe rânduri duble pentru butoane și remedierea suprapunerilor de text."
+                    ),
+                    itemsEn = listOf(
+                        "Live Ventusky weather forecast integration for individual hives and apiaries with direct map navigation at zoom level 11.",
+                        "Complete redesign of the apiary detail menu with structured two-row action buttons and fix for text overlapping issues."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    itemsRo = listOf(
+                        "Ajustări la comutarea bilingvă a meniurilor și optimizarea performanței interfeței."
+                    ),
+                    itemsEn = listOf(
+                        "Adjustments to bilingual menu switching and UI performance optimization."
+                    )
+                )
+            )
+        ),
+        ChangelogEntry(
             version = "v0.5.0",
             dateRo = "04 Noi 2026",
             dateEn = "04 Nov 2026",
