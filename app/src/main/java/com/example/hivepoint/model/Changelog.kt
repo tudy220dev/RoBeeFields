@@ -58,8 +58,6 @@ object ChangelogRepository {
                         "Jurnale de inspecție pe teren cu 5 secțiuni intuitive (Starea Reginei, Puterea Familiei cu controloare +/-, Intervenții & Tratamente, Comportament și Notițe rapide).",
                         "Selecția rasei de albine (Carpatină, Carnica, Buckfast, Italiană, Caucaziană, Neagră Europeană).",
                         "Selector pentru tendințele de roit (Fără tendințe, Tendințe slabe, Foarte puternice, Schimbare liniștită).",
-                        "Funcționalitate de mutare a stupilor și stupinelor prin 3 metode: Click pe hartă, Locația curentă GPS sau Coordonate manuale.",
-                        "Export și Import complet de date în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
                         "Integrare directă cu prognoza meteo Ventusky pentru fiecare stupină.",
                         "Suport bilingv complet (Română și Engleză) în toate meniurile stupilor, stupinelor și dialogurile aplicației."
                     ),
@@ -67,8 +65,6 @@ object ChangelogRepository {
                         "Field inspection logs with 5 intuitive sections (Queen Status, Colony Strength with +/- counters, Interventions & Treatments, Temperament, Quick Notes).",
                         "Bee race / type selection (Carpathian, Carnica, Buckfast, Italian, Caucasian, European Dark).",
                         "Swarming tendency selector (None, Low tendencies, Strong tendencies, Quiet supersedure).",
-                        "Hive and apiary relocation via 3 methods: Map tap, Current GPS location, or Manual coordinates.",
-                        "Complete CSV Export & Import functionality allowing custom folder/location selection.",
                         "Direct integration with Ventusky weather forecast for each apiary.",
                         "Full bilingual support (Romanian and English) across all hive, apiary, and dialog menus."
                     )
