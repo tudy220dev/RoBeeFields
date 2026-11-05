@@ -1,6 +1,7 @@
 package com.example.hivepoint.ui.components
 
 import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material3.AlertDialog
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -71,6 +73,7 @@ fun ApiaryDetailBottomSheet(
     var showAddHiveDialog by remember { mutableStateOf(false) }
     var showEditApiaryDialog by remember { mutableStateOf(false) }
     var showMoveDialog by remember { mutableStateOf(false) }
+    var Weatherloc by remember { mutableStateOf(false) }
 
     val individualHives = hives.filterNot { hive ->
         hive.hiveNumber.removePrefix("🏠").trim().equals(currentApiaryTitle, ignoreCase = true)
@@ -132,6 +135,14 @@ fun ApiaryDetailBottomSheet(
                 ) {
                     Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
                     Text(if (isEn) "Move" else "Mută", style = MaterialTheme.typography.labelSmall)
+                }
+
+                OutlinedButton(
+                    onClick = { Weatherloc = true },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(imageVector = Icons.Default.WbCloudy, contentDescription = null, modifier = Modifier.padding(end = 2.dp))
+                    Text(if (isEn) "Weather" else "Vreme", style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -249,6 +260,17 @@ fun ApiaryDetailBottomSheet(
                 onStartMapPickMode()
             }
         )
+    }
+
+    if (Weatherloc) {
+        val url = String.format(Locale.US, "https://www.ventusky.com/?p=%.5f;%.5f;11", apiaryLatitude, apiaryLongitude)
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        try {
+            context.startActivity(intent)
+        } catch (_: Exception) {
+            Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
+        }
+        Weatherloc = false
     }
 
     if (showAddHiveDialog) {

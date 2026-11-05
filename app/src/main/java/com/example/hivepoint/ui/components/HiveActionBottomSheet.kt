@@ -69,10 +69,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.hivepoint.db.HiveDbHelper
+import com.example.hivepoint.model.BeeRace
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
 import com.example.hivepoint.model.InspectionLog
 import com.example.hivepoint.model.QueenState
+import com.example.hivepoint.model.SwarmingTendency
 import com.example.hivepoint.model.Temperament
 import com.example.hivepoint.util.HiveSerializer
 import kotlinx.coroutines.launch
@@ -204,7 +206,6 @@ fun HiveActionBottomSheet(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Mută Stupul
             ListItem(
                 headlineContent = { Text(if (isEn) "Move Hive (GPS Location)" else "Mută Stupul (Move Location)") },
                 supportingContent = { Text(if (isEn) "Change GPS position on map or coordinates" else "Schimbă poziția GPS pe hartă sau prin coordonate") },
@@ -715,7 +716,11 @@ fun EditHiveDialog(
     var hiveNumber by remember { mutableStateOf(hive.hiveNumber) }
     var notes by remember { mutableStateOf(hive.notes) }
     var selectedStatus by remember { mutableStateOf(hive.status) }
+    var selectedBeeRace by remember { mutableStateOf(hive.beeRace) }
+    var selectedSwarming by remember { mutableStateOf(hive.swarmingTendency) }
     var expandedStatus by remember { mutableStateOf(false) }
+    var expandedRace by remember { mutableStateOf(false) }
+    var expandedSwarming by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -764,6 +769,68 @@ fun EditHiveDialog(
                     }
                 }
 
+                // Bee Race Dropdown
+                ExposedDropdownMenuBox(
+                    expanded = expandedRace,
+                    onExpandedChange = { expandedRace = !expandedRace }
+                ) {
+                    OutlinedTextField(
+                        value = "${selectedBeeRace.toDisplayName(selectedLanguage)} (${selectedBeeRace.scientificName})",
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(if (isEn) "Bee Race (Type)" else "Tip Albine / Rasă") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRace) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedRace,
+                        onDismissRequest = { expandedRace = false }
+                    ) {
+                        BeeRace.entries.forEach { race ->
+                            DropdownMenuItem(
+                                text = { Text("${race.toDisplayName(selectedLanguage)} (${race.scientificName})") },
+                                onClick = {
+                                    selectedBeeRace = race
+                                    expandedRace = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Swarming Tendency Dropdown
+                ExposedDropdownMenuBox(
+                    expanded = expandedSwarming,
+                    onExpandedChange = { expandedSwarming = !expandedSwarming }
+                ) {
+                    OutlinedTextField(
+                        value = selectedSwarming.toDisplayName(selectedLanguage),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(if (isEn) "Swarming Tendency" else "Tendințe de Roit") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSwarming) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedSwarming,
+                        onDismissRequest = { expandedSwarming = false }
+                    ) {
+                        SwarmingTendency.entries.forEach { tendency ->
+                            DropdownMenuItem(
+                                text = { Text(tendency.toDisplayName(selectedLanguage)) },
+                                onClick = {
+                                    selectedSwarming = tendency
+                                    expandedSwarming = false
+                                }
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
@@ -781,6 +848,8 @@ fun EditHiveDialog(
                     val updated = hive.copy(
                         hiveNumber = hiveNumber.ifBlank { hive.hiveNumber },
                         status = selectedStatus,
+                        beeRace = selectedBeeRace,
+                        swarmingTendency = selectedSwarming,
                         notes = notes,
                         updatedAt = System.currentTimeMillis()
                     )
@@ -819,6 +888,8 @@ fun HiveDetailsDialog(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(if (isEn) "Status: ${hive.status.toDisplayName(selectedLanguage)}" else "Stare: ${hive.status.toDisplayName(selectedLanguage)}")
+                Text(if (isEn) "Bee Race: ${hive.beeRace.toDisplayName(selectedLanguage)} (${hive.beeRace.scientificName})" else "Rasa de albine: ${hive.beeRace.toDisplayName(selectedLanguage)} (${hive.beeRace.scientificName})")
+                Text(if (isEn) "Swarming Tendency: ${hive.swarmingTendency.toDisplayName(selectedLanguage)}" else "Tendințe de roit: ${hive.swarmingTendency.toDisplayName(selectedLanguage)}")
                 Text(if (isEn) "Coordinates: ${hive.latitude}, ${hive.longitude}" else "Coordonate: ${hive.latitude}, ${hive.longitude}")
                 Text(if (isEn) "Last update: ${dateFormat.format(Date(hive.updatedAt))}" else "Ultima actualizare: ${dateFormat.format(Date(hive.updatedAt))}")
                 if (hive.notes.isNotBlank()) {
