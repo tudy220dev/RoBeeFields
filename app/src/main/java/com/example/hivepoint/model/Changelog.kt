@@ -1,5 +1,7 @@
 package com.example.hivepoint.model
 
+import com.example.hivepoint.util.AppLocalization
+
 enum class ChangelogCategory(val label: String) {
     ALL("All"),
     FIELD("Field"),
@@ -11,11 +13,44 @@ enum class ChangelogCategory(val label: String) {
 data class ChangelogSection(
     val titleRo: String,
     val titleEn: String,
+    val titleFr: String = titleEn,
+    val titleHu: String = titleEn,
+    val titleDe: String = titleEn,
+    val titleUk: String = titleEn,
+    val titleRu: String = titleEn,
+    val titleBg: String = titleEn,
+    val titlePt: String = titleEn,
+    val titleIt: String = titleEn,
+    val titleEs: String = titleEn,
     val itemsRo: List<String>,
-    val itemsEn: List<String>
+    val itemsEn: List<String>,
+    val itemsFr: List<String> = itemsEn,
+    val itemsHu: List<String> = itemsEn,
+    val itemsDe: List<String> = itemsEn,
+    val itemsUk: List<String> = itemsEn,
+    val itemsRu: List<String> = itemsEn,
+    val itemsBg: List<String> = itemsEn,
+    val itemsPt: List<String> = itemsEn,
+    val itemsIt: List<String> = itemsEn,
+    val itemsEs: List<String> = itemsEn
 ) {
-    fun getTitle(lang: String): String = if (lang == "English") titleEn else titleRo
-    fun getItems(lang: String): List<String> = if (lang == "English") itemsEn else itemsRo
+    fun getTitle(lang: String): String = AppLocalization.get(lang, titleRo, titleEn, titleFr, titleHu, titleDe, titleUk, titleRu, titleBg, titlePt, titleIt, titleEs)
+    fun getItems(lang: String): List<String> {
+        return when (lang) {
+            "Română" -> itemsRo
+            "English" -> itemsEn
+            "Français" -> itemsFr
+            "Magyar" -> itemsHu
+            "Deutsch" -> itemsDe
+            "Ukrainian" -> itemsUk
+            "Russian" -> itemsRu
+            "Bulgarian" -> itemsBg
+            "Portuguese" -> itemsPt
+            "Italian" -> itemsIt
+            "Spanish" -> itemsEs
+            else -> itemsEn
+        }
+    }
 }
 
 data class ChangelogEntry(
@@ -24,21 +59,206 @@ data class ChangelogEntry(
     val dateEn: String,
     val titleRo: String,
     val titleEn: String,
+    val titleFr: String = titleEn,
+    val titleHu: String = titleEn,
+    val titleDe: String = titleEn,
+    val titleUk: String = titleEn,
+    val titleRu: String = titleEn,
+    val titleBg: String = titleEn,
+    val titlePt: String = titleEn,
+    val titleIt: String = titleEn,
+    val titleEs: String = titleEn,
     val tagRo: String,
     val tagEn: String,
+    val tagFr: String = tagEn,
+    val tagHu: String = tagEn,
+    val tagDe: String = tagEn,
+    val tagUk: String = tagEn,
+    val tagRu: String = tagEn,
+    val tagBg: String = tagEn,
+    val tagPt: String = tagEn,
+    val tagIt: String = tagEn,
+    val tagEs: String = tagEn,
     val category: ChangelogCategory = ChangelogCategory.CORE,
     val descriptionRo: String? = null,
     val descriptionEn: String? = null,
+    val descriptionFr: String? = descriptionEn,
+    val descriptionHu: String? = descriptionEn,
+    val descriptionDe: String? = descriptionEn,
+    val descriptionUk: String? = descriptionEn,
+    val descriptionRu: String? = descriptionEn,
+    val descriptionBg: String? = descriptionEn,
+    val descriptionPt: String? = descriptionEn,
+    val descriptionIt: String? = descriptionEn,
+    val descriptionEs: String? = descriptionEn,
     val sections: List<ChangelogSection> = emptyList()
 ) {
     fun getDate(lang: String): String = if (lang == "English") dateEn else dateRo
-    fun getTag(lang: String): String = if (lang == "English") tagEn else tagRo
-    fun getTitle(lang: String): String = if (lang == "English") titleEn else titleRo
-    fun getDescription(lang: String): String? = if (lang == "English") descriptionEn else descriptionRo
+    fun getTag(lang: String): String = AppLocalization.get(lang, tagRo, tagEn, tagFr, tagHu, tagDe, tagUk, tagRu, tagBg, tagPt, tagIt, tagEs)
+    fun getTitle(lang: String): String = AppLocalization.get(lang, titleRo, titleEn, titleFr, titleHu, titleDe, titleUk, titleRu, titleBg, titlePt, titleIt, titleEs)
+    fun getDescription(lang: String): String? {
+        val d = AppLocalization.get(lang, descriptionRo ?: "", descriptionEn ?: "", descriptionFr ?: "", descriptionHu ?: "", descriptionDe ?: "", descriptionUk ?: "", descriptionRu ?: "", descriptionBg ?: "", descriptionPt ?: "", descriptionIt ?: "", descriptionEs ?: "")
+        return if (d.isBlank()) descriptionEn else d
+    }
 }
 
 object ChangelogRepository {
     val entries = listOf(
+        ChangelogEntry(
+            version = "v0.6.0",
+            dateRo = "06 Noi 2026",
+            dateEn = "06 Nov 2026",
+            titleRo = "RoBee Fields 0.6.0 (Ediție Globală: 11 Limbi & Optimizare UI Stupine)",
+            titleEn = "RoBee Fields 0.6.0 (Global Edition: 11 Languages & Apiary UI Optimization)",
+            titleFr = "RoBee Fields 0.6.0 (Édition Globale : 11 Langues & UI Stupines)",
+            titleHu = "RoBee Fields 0.6.0 (Globális Kiadás: 11 Nyelv & UI)",
+            titleDe = "RoBee Fields 0.6.0 (Globale Edition: 11 Sprachen & UI)",
+            titleUk = "RoBee Fields 0.6.0 (Глобальне видання: 11 мов та UI)",
+            titleRu = "RoBee Fields 0.6.0 (Глобальное издание: 11 языков и UI)",
+            titleBg = "RoBee Fields 0.6.0 (Глобално издание: 11 езика и UI)",
+            titlePt = "RoBee Fields 0.6.0 (Edição Global: 11 Idiomas & UI)",
+            titleIt = "RoBee Fields 0.6.0 (Edizione Globale: 11 Lingue & UI)",
+            titleEs = "RoBee Fields 0.6.0 (Edición Global: 11 Idiomas & UI)",
+            tagRo = "Teren",
+            tagEn = "Field",
+            tagFr = "Terrain",
+            tagHu = "Terep",
+            tagDe = "Feld",
+            tagUk = "Поле",
+            tagRu = "Поле",
+            tagBg = "Поле",
+            tagPt = "Campo",
+            tagIt = "Campo",
+            tagEs = "Campo",
+            category = ChangelogCategory.FIELD,
+            descriptionRo = "Versiunea 0.6.0 extinde suportul lingvistic la 11 limbi internaționale cu steaguri oficiale și optimizează interfața de utilizare în meniul stupinelor.",
+            descriptionEn = "Version 0.6.0 expands language support to 11 international languages with official flags and optimizes the user interface in the apiary menu.",
+            descriptionFr = "La version 0.6.0 étend le support linguistique à 11 langues internationales avec des drapeaux officiels et optimise l'interface utilisateur du rucher.",
+            descriptionHu = "A 0.6.0-ás verzió 11 nemzetközi nyelvre terjeszti ki a nyelvi támogatást zászlókkal és optimalizálja a méhészet menü felületét.",
+            descriptionDe = "Version 0.6.0 erweitert die Sprachunterstützung auf 11 internationale Sprachen mit Flaggen und optimiert das Imkerei-Menü.",
+            descriptionUk = "Версія 0.6.0 розширює підтримку до 11 міжнародних мов з прапорцями та оптимізує інтерфейс меню пасіки.",
+            descriptionRu = "Версия 0.6.0 расширяет поддержку до 11 международных языков с флагами и оптимизирует интерфейс меню пасеки.",
+            descriptionBg = "Версия 0.6.0 разширява поддръжката до 11 международни езика със знамена и оптимизира интерфейса на пчелина.",
+            descriptionPt = "A versão 0.6.0 expande o suporte para 11 idiomas com bandeiras e otimiza a interface do apiário.",
+            descriptionIt = "La versione 0.6.0 espande il supporto a 11 lingue con bandiere e ottimizza l'interfaccia dell'apiario.",
+            descriptionEs = "La versión 0.6.0 amplía el soporte a 11 idiomas con banderas y optimiza la interfaz del colmenar.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    titleFr = "Nouveau",
+                    titleHu = "Új",
+                    titleDe = "Neu",
+                    titleUk = "Нове",
+                    titleRu = "Новое",
+                    titleBg = "Ново",
+                    titlePt = "Novo",
+                    titleIt = "Nuovo",
+                    titleEs = "Nuevo",
+                    itemsRo = listOf(
+                        "Suport lingvistic extins la 11 limbi internaționale (Română, Engleză, Franceză, Magiară, Germană, Ucraineană, Rusă, Bulgară, Portugheză, Italiană și Spaniolă) cu steaguri dedicate în setări.",
+                        "Localizarea completă a tuturor setărilor, stărilor, raselor de albine, tendințelor de roit și ferestrelor de dialog în cele 11 limbi.",
+                        "Refacerea completă a layout-ului în meniul stupinelor cu butoane organizate pe două rânduri pentru o utilizare fără cusur pe teren."
+                    ),
+                    itemsEn = listOf(
+                        "Language support expanded to 11 international languages (Romanian, English, French, Hungarian, German, Ukrainian, Russian, Bulgarian, Portuguese, Italian, and Spanish) with dedicated flags in settings.",
+                        "Full localization of all settings, hive statuses, bee races, swarming tendencies, and dialog windows across all 11 languages.",
+                        "Complete redesign of the apiary menu layout with two-row structured action buttons for seamless field usability."
+                    ),
+                    itemsFr = listOf(
+                        "Prise en charge de 11 langues internationales (Roumain, Anglais, Français, Hongrois, Allemand, Ukrainien, Russe, Bulgare, Portugais, Italien, Espagnol) avec drapeaux.",
+                        "Traduction complète de tous les paramètres, états des ruches, races d'abeilles et fenêtres de dialogue.",
+                        "Refonte complète de la disposition du menu des ruchers avec des boutons sur deux rangées."
+                    ),
+                    itemsHu = listOf(
+                        "Nyelvi támogatás kiterjesztése 11 nemzetközi nyelvre zászlókkal a beállításokban.",
+                        "Minden beállítás, kaptárállomány, méhfajta, rajzási hajlam és párbeszédablak teljes lokalizációja.",
+                        "A kaptár menü elrendezésének teljes újratervezése kétsoros gombokkal."
+                    ),
+                    itemsDe = listOf(
+                        "Sprachunterstützung auf 11 internationale Sprachen erweitert mit Flaggen.",
+                        "Vollständige Lokalisierung aller Einstellungen, Bienenrassen, Schwarmtendenzen und Dialoge.",
+                        "Komplette Neugestaltung des Imkerei-Menüs mit zweireihigen Aktionsschaltflächen."
+                    ),
+                    itemsUk = listOf(
+                        "Підтримка 11 міжнародних мов з прапорцями в налаштуваннях.",
+                        "Повна локалізація всіх налаштувань, станів вуликів, порід бджіл та діалогових вікон.",
+                        "Повна переробка меню пасіки з дворядними кнопками."
+                    ),
+                    itemsRu = listOf(
+                        "Поддержка 11 международных языков с флагами в настройках.",
+                        "Полная локализация всех настроек, статусов ульев, пород пчел и диалоговых окон.",
+                        "Полная переработка меню пасеки с двухрядными кнопками."
+                    ),
+                    itemsBg = listOf(
+                        "Поддръжка на 11 международни езика със знамена в настройките.",
+                        "Пълна локализация на всички настройки, състояния на кошерите, породи пчели и диалогови прозорци.",
+                        "Пълно преработване на менюто на пчелина с двуредови бутони."
+                    ),
+                    itemsPt = listOf(
+                        "Suporte a 11 idiomas internacionais com bandeiras nas configurações.",
+                        "Localização completa de todas as configurações, status, raças e diálogos.",
+                        "Redesenho completo do menu do apiário com botões em duas linhas."
+                    ),
+                    itemsIt = listOf(
+                        "Supporto a 11 lingue internazionali con bandiere nelle impostazioni.",
+                        "Localizzazione completa di tutte le impostazioni, stati, razze e finestre di dialogo.",
+                        "Riprogettazione completa del menu dell'apiario con pulsanti su due file."
+                    ),
+                    itemsEs = listOf(
+                        "Soporte para 11 idiomas internacionales con banderas en los ajustes.",
+                        "Localización completa de todos los ajustes, estados, razas y diálogos.",
+                        "Rediseño completo del menú del colmenar con botones en dos filas."
+                    )
+                ),
+                ChangelogSection(
+                    titleRo = "Îmbunătățit",
+                    titleEn = "Improved",
+                    titleFr = "Amélioré",
+                    titleHu = "Fejlesztve",
+                    titleDe = "Verbessert",
+                    titleUk = "Покращено",
+                    titleRu = "Улучшено",
+                    titleBg = "Подобрено",
+                    titlePt = "Melhorado",
+                    titleIt = "Migliorato",
+                    titleEs = "Mejorado",
+                    itemsRo = listOf(
+                        "Optimizarea performanței aplicației și fluidizarea comutării dinamice a limbii în timp real."
+                    ),
+                    itemsEn = listOf(
+                        "Optimized application performance and streamlined real-time dynamic language switching."
+                    ),
+                    itemsFr = listOf(
+                        "Optimisation des performances de l'application et fluidité du changement de langue en temps réel."
+                    ),
+                    itemsHu = listOf(
+                        "Az alkalmazás teljesítményének optimalizálása és a valós idejű dinamikus nyelvváltás."
+                    ),
+                    itemsDe = listOf(
+                        "Optimierung der App-Leistung und reibungsloser Sprachwechsel in Echtzeit."
+                    ),
+                    itemsUk = listOf(
+                        "Оптимізація продуктивності програми та плавне перемикання мови в реальному часі."
+                    ),
+                    itemsRu = listOf(
+                        "Оптимизация производительности приложения и плавное переключение языка в реальном времени."
+                    ),
+                    itemsBg = listOf(
+                        "Оптимизиране на производителността на приложението и плавно превключване на езика в реално време."
+                    ),
+                    itemsPt = listOf(
+                        "Otimização do desempenho do aplicativo e troca de idioma em tempo real."
+                    ),
+                    itemsIt = listOf(
+                        "Ottimizzazione delle prestazioni dell'app e cambio lingua in tempo reale."
+                    ),
+                    itemsEs = listOf(
+                        "Optimización del rendimiento de la aplicación y cambio de idioma en tiempo real."
+                    )
+                )
+            )
+        ),
         ChangelogEntry(
             version = "v0.5.1",
             dateRo = "05 Noi 2026",
@@ -61,16 +281,6 @@ object ChangelogRepository {
                     itemsEn = listOf(
                         "Live Ventusky weather forecast integration for individual hives and apiaries with direct map navigation at zoom level 11.",
                         "Complete redesign of the apiary detail menu with structured two-row action buttons and fix for text overlapping issues."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Ajustări la comutarea bilingvă a meniurilor și optimizarea performanței interfeței."
-                    ),
-                    itemsEn = listOf(
-                        "Adjustments to bilingual menu switching and UI performance optimization."
                     )
                 )
             )
@@ -95,78 +305,14 @@ object ChangelogRepository {
                         "Selecția rasei de albine (Carpatină, Carnica, Buckfast, Italiană, Caucaziană, Neagră Europeană).",
                         "Selector pentru tendințele de roit (Fără tendințe, Tendințe slabe, Foarte puternice, Schimbare liniștită).",
                         "Funcționalitate de mutare a stupilor și stupinelor prin 3 metode: Click pe hartă, Locația curentă GPS sau Coordonate manuale.",
-                        "Export și Import complet de date în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
-                        "Suport bilingv complet (Română și Engleză) în toate meniurile stupilor, stupinelor și dialogurile aplicației."
+                        "Export și Import complet de date în format CSV, permițând alegerea locației de salvare și a fișierului dorit."
                     ),
                     itemsEn = listOf(
                         "Field inspection logs with 5 intuitive sections (Queen Status, Colony Strength with +/- counters, Interventions & Treatments, Temperament, Quick Notes).",
                         "Bee race / type selection (Carpathian, Carnica, Buckfast, Italian, Caucasian, European Dark).",
                         "Swarming tendency selector (None, Low tendencies, Strong tendencies, Quiet supersedure).",
                         "Hive and apiary relocation via 3 methods: Map tap, Current GPS location, or Manual coordinates.",
-                        "Complete CSV Export & Import functionality allowing custom folder/location selection.",
-                        "Full bilingual support (Romanian and English) across all hive, apiary, and dialog menus."
-                    )
-                ),
-                ChangelogSection(
-                    titleRo = "Îmbunătățit",
-                    titleEn = "Improved",
-                    itemsRo = listOf(
-                        "Optimizarea performanței bazei de date SQLite (versiunea 4) și îmbunătățirea experienței de utilizare pe teren."
-                    ),
-                    itemsEn = listOf(
-                        "Optimized SQLite database performance (version 4) and enhanced field user experience."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
-            version = "v0.4.2",
-            dateRo = "20 Oct 2026",
-            dateEn = "20 Oct 2026",
-            titleRo = "RoBee Fields 0.4.2 (Suport Bilingv Extins în Meniuri)",
-            titleEn = "RoBee Fields 0.4.2 (Extended Multilingual Menu Support)",
-            tagRo = "Teren",
-            tagEn = "Field",
-            category = ChangelogCategory.FIELD,
-            descriptionRo = "Extinderea suportului bilingv complet (Română / Engleză) în toate meniurile stupilor, stupinelor și ferestrele de dialog ale aplicației.",
-            descriptionEn = "Extended full bilingual support (Romanian / English) across all hive, apiary, and dialog menus.",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Suport bilingv complet (Română/Engleză) pentru toate meniurile stupilor, stupinelor și ferestrele de inspecție/editare.",
-                        "Comutare dinamică instantanee a limbii în întreaga interfață a aplicației."
-                    ),
-                    itemsEn = listOf(
-                        "Full bilingual support (Romanian/English) for all hive, apiary, and inspection/edit dialog menus.",
-                        "Instant dynamic language switching across the entire application interface."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
-            version = "v0.4.1",
-            dateRo = "20 Oct 2026",
-            dateEn = "20 Oct 2026",
-            titleRo = "RoBee Fields 0.4.1 (Mutare Avansată Stupi & Stupine)",
-            titleEn = "RoBee Fields 0.4.1 (Advanced Hive & Apiary Relocation)",
-            tagRo = "Teren",
-            tagEn = "Field",
-            category = ChangelogCategory.FIELD,
-            descriptionRo = "Adăugarea funcționalității de mutare a poziției GPS pentru stupi și stupine prin 3 metode interactive pe teren.",
-            descriptionEn = "Added location relocation functionality for individual hives and apiaries via 3 interactive field methods.",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Dialog de mutare (MoveLocationDialog) pentru stupi și stupine cu opțiunile: 1) Click pe hartă, 2) Locația curentă GPS a telefonului și 3) Coordonate GPS manuale (Lat/Long).",
-                        "Actualizare automată a poziției pe hartă și salvare instantanee în baza de date locală SQLite."
-                    ),
-                    itemsEn = listOf(
-                        "Relocation dialog (MoveLocationDialog) for hives and apiaries featuring: 1) Map tap placement, 2) Current phone GPS location, and 3) Manual GPS coordinates (Lat/Long).",
-                        "Automatic map pin position update and instant persistence in local SQLite database."
+                        "Complete CSV Export & Import functionality allowing custom folder/location selection."
                     )
                 )
             )
@@ -187,66 +333,12 @@ object ChangelogRepository {
                     titleRo = "Nou",
                     titleEn = "New",
                     itemsRo = listOf(
-                        "Jurnale de inspecție pe teren cu 5 secțiuni intuitive (Starea Reginei, Puterea Familiei, Intervenții & Tratamente, Comportament și Notițe rapide).",
-                        "Funcționalitate de Export și Import în format CSV, permițând alegerea locației de salvare și a fișierului dorit.",
+                        "Jurnale de inspecție pe teren cu 5 secțiuni intuitive.",
                         "Istoric detaliat al inspecțiilor salvat persistent în baza de date SQLite."
                     ),
                     itemsEn = listOf(
-                        "Field inspection logs with 5 intuitive sections (Queen State, Family Power, Treatments & Interventions, Temperament, Quick Notes).",
-                        "CSV Export & Import functionality allowing folder/location selection and file choice.",
+                        "Field inspection logs with 5 intuitive sections.",
                         "Detailed inspection history persistently saved in SQLite database."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
-            version = "v0.3.2",
-            dateRo = "18 Oct 2026",
-            dateEn = "18 Oct 2026",
-            titleRo = "RoBee Fields 0.3.2 (Suport Multilingvistic pentru Changelog)",
-            titleEn = "RoBee Fields 0.3.2 (Multilingual Support for Changelog)",
-            tagRo = "Teren",
-            tagEn = "Field",
-            category = ChangelogCategory.FIELD,
-            descriptionRo = "Suport extins pentru comutarea limbii (Română/Engleză) în secțiunea Changelog și ecranul Despre, împreună cu remedierea erorilor de localizare.",
-            descriptionEn = "Extended language switching support (Romanian/English) in the Changelog section and About screen, along with localization bug fixes.",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Suport bilingv (Română și Engleză) pentru toate intrările din istoricul Changelog.",
-                        "Tratarea dinamică a schimbării limbii în ecranul Despre."
-                    ),
-                    itemsEn = listOf(
-                        "Bilingual support (Romanian and English) for all Changelog history entries.",
-                        "Dynamic language switching handling on the About screen."
-                    )
-                )
-            )
-        ),
-        ChangelogEntry(
-            version = "v0.3.1",
-            dateRo = "16 Oct 2026",
-            dateEn = "16 Oct 2026",
-            titleRo = "RoBee Fields 0.3.1 (Field Edition)",
-            titleEn = "RoBee Fields 0.3.1 (Field Edition)",
-            tagRo = "Teren",
-            tagEn = "Field",
-            category = ChangelogCategory.FIELD,
-            descriptionRo = "Ajustări de interfață utilizator, integrarea siglei oficiale RoBee Fields și implementarea istoricului interactiv Changelog.",
-            descriptionEn = "UI adjustments, integration of the official RoBee Fields logo, and implementation of the interactive Changelog history.",
-            sections = listOf(
-                ChangelogSection(
-                    titleRo = "Nou",
-                    titleEn = "New",
-                    itemsRo = listOf(
-                        "Secțiune nouă Changelog în ecranul Despre cu istoric detaliat al versiunilor.",
-                        "Integrare siglă oficială RoBee Fields ca logo al aplicației."
-                    ),
-                    itemsEn = listOf(
-                        "New Changelog section in the About screen with detailed version history.",
-                        "Integration of official RoBee Fields logo as the app icon."
                     )
                 )
             )
@@ -260,8 +352,8 @@ object ChangelogRepository {
             tagRo = "Teren",
             tagEn = "Field",
             category = ChangelogCategory.FIELD,
-            descriptionRo = "Această actualizare aduce optimizări majore pentru navigarea offline pe teren, gestiunea avansată a stupinelor și o interfață modernizată.",
-            descriptionEn = "This update brings major optimizations for offline field navigation, advanced apiary management, and a modernized interface.",
+            descriptionRo = "Optimizări majore pentru navigarea offline pe teren cu Mapsforge și osmdroid.",
+            descriptionEn = "Major optimizations for offline field navigation with Mapsforge and osmdroid.",
             sections = listOf(
                 ChangelogSection(
                     titleRo = "Nou",
@@ -286,8 +378,8 @@ object ChangelogRepository {
             tagRo = "Sincronizare",
             tagEn = "Sync",
             category = ChangelogCategory.SYNC,
-            descriptionRo = "Introducerea protocoalelor de comunicare directă între apicultori în zone fără acoperire GSM.",
-            descriptionEn = "Introduction of direct communication protocols between beekeepers in areas without cellular coverage.",
+            descriptionRo = "Protocoale de comunicare directă între apicultori în zone fără acoperire GSM.",
+            descriptionEn = "Direct communication protocols between beekeepers in areas without cellular coverage.",
             sections = listOf(
                 ChangelogSection(
                     titleRo = "Nou",
@@ -307,13 +399,13 @@ object ChangelogRepository {
             version = "v0.1.0",
             dateRo = "10 Oct 2026",
             dateEn = "10 Oct 2026",
-            titleRo = "Nucleul Aplicației (Arhitectură Inițială)",
-            titleEn = "App Core (Initial Architecture)",
+            titleRo = "Nucleul Aplicației",
+            titleEn = "App Core",
             tagRo = "Nucleu",
             tagEn = "Core",
             category = ChangelogCategory.CORE,
-            descriptionRo = "Prima versiune funcțională a aplicației pentru gestiunea stupinelor fără internet.",
-            descriptionEn = "First functional version of the application for managing apiaries without internet access.",
+            descriptionRo = "Prima versiune funcțională a aplicației pentru gestiunea stupinelor offline.",
+            descriptionEn = "First functional version of the application for managing apiaries offline.",
             sections = listOf(
                 ChangelogSection(
                     titleRo = "Nou",
