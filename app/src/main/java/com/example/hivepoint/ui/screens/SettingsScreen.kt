@@ -49,11 +49,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.hivepoint.model.MapType
+import com.example.hivepoint.util.AppLocalization
 import com.example.hivepoint.util.HiveCsvExporter
 import com.example.hivepoint.util.MapCacheManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withContext
 
 data class MapsforgeRegion(
@@ -65,113 +65,236 @@ data class MapsforgeRegion(
 )
 
 val MAPSFORGE_REGIONS = listOf(
-    // 🇷🇴 România & Regiuni
     MapsforgeRegion("romania", "România (Toată țara)", "🇷🇴", "45 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_banat", "România - Banat", "🇷🇴", "8 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_crisana", "România - Crișana", "🇷🇴", "7 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_dobrogea", "România - Dobrogea", "🇷🇴", "6 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_maramures", "România - Maramureș", "🇷🇴", "6 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_moldova", "România - Moldova", "🇷🇴", "10 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_muntenia", "România - Muntenia", "🇷🇴", "12 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-    MapsforgeRegion("romania_oltenia", "România - Oltenia", "🇷🇴", "9 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
     MapsforgeRegion("romania_transylvania", "România - Transilvania & Brașov", "🏔️", "14 MB", "https://download.mapsforge.org/maps/v5/europe/romania.map"),
-
-    // 🇲🇩 Republica Moldova
     MapsforgeRegion("moldova", "Republica Moldova", "🇲🇩", "12 MB", "https://download.mapsforge.org/maps/v5/europe/moldova.map"),
-
-    // 🇧🇬 Bulgaria
     MapsforgeRegion("bulgaria", "Bulgaria (Toată țara)", "🇧🇬", "32 MB", "https://download.mapsforge.org/maps/v5/europe/bulgaria.map"),
-
-    // 🇭🇺 Ungaria
     MapsforgeRegion("hungary", "Ungaria (Toată țara)", "🇭🇺", "28 MB", "https://download.mapsforge.org/maps/v5/europe/hungary.map"),
-
-    // 🇩🇪 Germania & Regiuni (Länder)
     MapsforgeRegion("germany", "Germania (Toată țara)", "🇩🇪", "185 MB", "https://download.mapsforge.org/maps/v5/europe/germany.map"),
-    MapsforgeRegion("germany_bayern", "Germania - Bayern (Bavaria)", "🇩🇪", "38 MB", "https://download.mapsforge.org/maps/v5/europe/germany/bayern.map"),
-    MapsforgeRegion("germany_baden_wuerttemberg", "Germania - Baden-Württemberg", "🇩🇪", "28 MB", "https://download.mapsforge.org/maps/v5/europe/germany/baden-wuerttemberg.map"),
-    MapsforgeRegion("germany_berlin", "Germania - Berlin & Brandenburg", "🇩🇪", "18 MB", "https://download.mapsforge.org/maps/v5/europe/germany/berlin.map"),
-    MapsforgeRegion("germany_hessen", "Germania - Hessen", "🇩🇪", "16 MB", "https://download.mapsforge.org/maps/v5/europe/germany/hessen.map"),
-    MapsforgeRegion("germany_nordrhein_westfalen", "Germania - Nordrhein-Westfalen", "🇩🇪", "35 MB", "https://download.mapsforge.org/maps/v5/europe/germany/nordrhein-westfalen.map"),
-    MapsforgeRegion("germany_sachsen", "Germania - Sachsen", "🇩🇪", "14 MB", "https://download.mapsforge.org/maps/v5/europe/germany/sachsen.map"),
-
-    // 🇫🇷 Franța & Regiuni
     MapsforgeRegion("france", "Franța (Toată țara)", "🇫🇷", "190 MB", "https://download.mapsforge.org/maps/v5/europe/france.map"),
-    MapsforgeRegion("france_alsace", "Franța - Alsace", "🇫🇷", "12 MB", "https://download.mapsforge.org/maps/v5/europe/france/alsace.map"),
-    MapsforgeRegion("france_aquitaine", "Franța - Aquitaine", "🇫🇷", "22 MB", "https://download.mapsforge.org/maps/v5/europe/france/aquitaine.map"),
-    MapsforgeRegion("france_bretagne", "Franța - Bretagne", "🇫🇷", "18 MB", "https://download.mapsforge.org/maps/v5/europe/france/bretagne.map"),
-    MapsforgeRegion("france_ile_de_france", "Franța - Île-de-France (Paris)", "🇫🇷", "25 MB", "https://download.mapsforge.org/maps/v5/europe/france/ile-de-france.map"),
-    MapsforgeRegion("france_paca", "Franța - Provence-Alpes-Côte d'Azur", "🇫🇷", "24 MB", "https://download.mapsforge.org/maps/v5/europe/france/paca.map"),
-    MapsforgeRegion("france_rhone_alpes", "Franța - Rhône-Alpes", "🇫🇷", "28 MB", "https://download.mapsforge.org/maps/v5/europe/france/rhone-alpes.map"),
-
-    // 🇮🇹 Italia & Regiuni
     MapsforgeRegion("italy", "Italia (Toată țara)", "🇮🇹", "145 MB", "https://download.mapsforge.org/maps/v5/europe/italy.map"),
-    MapsforgeRegion("italy_lazio", "Italia - Lazio (Roma)", "🇮🇹", "18 MB", "https://download.mapsforge.org/maps/v5/europe/italy/lazio.map"),
-    MapsforgeRegion("italy_lombardia", "Italia - Lombardia (Milano)", "🇮🇹", "25 MB", "https://download.mapsforge.org/maps/v5/europe/italy/lombardia.map"),
-    MapsforgeRegion("italy_piemonte", "Italia - Piemonte", "🇮🇹", "20 MB", "https://download.mapsforge.org/maps/v5/europe/italy/piemonte.map"),
-    MapsforgeRegion("italy_sicilia", "Italia - Sicilia", "🇮🇹", "16 MB", "https://download.mapsforge.org/maps/v5/europe/italy/sicilia.map"),
-    MapsforgeRegion("italy_toscana", "Italia - Toscana", "🇮🇹", "18 MB", "https://download.mapsforge.org/maps/v5/europe/italy/toscana.map"),
-    MapsforgeRegion("italy_veneto", "Italia - Veneto (Venezia)", "🇮🇹", "19 MB", "https://download.mapsforge.org/maps/v5/europe/italy/veneto.map"),
-
-    // 🇪🇸 Spania & Regiuni
     MapsforgeRegion("spain", "Spania (Toată țara)", "🇪🇸", "130 MB", "https://download.mapsforge.org/maps/v5/europe/spain.map"),
-    MapsforgeRegion("spain_andalucia", "Spania - Andalucía", "🇪🇸", "28 MB", "https://download.mapsforge.org/maps/v5/europe/spain/andalucia.map"),
-    MapsforgeRegion("spain_catalunya", "Spania - Catalunya (Barcelona)", "🇪🇸", "22 MB", "https://download.mapsforge.org/maps/v5/europe/spain/catalunya.map"),
-    MapsforgeRegion("spain_madrid", "Spania - Madrid", "🇪🇸", "12 MB", "https://download.mapsforge.org/maps/v5/europe/spain/madrid.map"),
-    MapsforgeRegion("spain_valencia", "Spania - Valencia", "🇪🇸", "18 MB", "https://download.mapsforge.org/maps/v5/europe/spain/valencia.map"),
-
-    // 🇬🇧 Marea Britanie & Regiuni
-    MapsforgeRegion("great_britain", "Marea Britanie (Toată țara)", "🇬🇧", "110 MB", "https://download.mapsforge.org/maps/v5/europe/great_britain.map"),
-    MapsforgeRegion("gb_england", "Marea Britanie - Anglia", "🇬🇧", "75 MB", "https://download.mapsforge.org/maps/v5/europe/great_britain/england.map"),
-    MapsforgeRegion("gb_scotland", "Marea Britanie - Scoția", "🇬🇧", "28 MB", "https://download.mapsforge.org/maps/v5/europe/great_britain/scotland.map"),
-    MapsforgeRegion("gb_wales", "Marea Britanie - Țara Galilor", "🇬🇧", "15 MB", "https://download.mapsforge.org/maps/v5/europe/great_britain/wales.map"),
-
-    // 🇵🇱 Polonia & Regiuni
-    MapsforgeRegion("poland", "Polonia (Toată țara)", "🇵🇱", "95 MB", "https://download.mapsforge.org/maps/v5/europe/poland.map"),
-    MapsforgeRegion("poland_malopolskie", "Polonia - Małopolskie (Kraków)", "🇵🇱", "16 MB", "https://download.mapsforge.org/maps/v5/europe/poland/malopolskie.map"),
-    MapsforgeRegion("poland_mazowieckie", "Polonia - Mazowieckie (Warszawa)", "🇵🇱", "20 MB", "https://download.mapsforge.org/maps/v5/europe/poland/mazowieckie.map"),
-    MapsforgeRegion("poland_slaskie", "Polonia - Śląskie", "🇵🇱", "18 MB", "https://download.mapsforge.org/maps/v5/europe/poland/slaskie.map"),
-
-    // 🇺̂ Ucraina, 🇦🇹 Austria, 🇨🇭 Elveția, 🇬🇷 Grecia
-    MapsforgeRegion("ukraine", "Ucraina (Toată țara)", "🇺🇦", "80 MB", "https://download.mapsforge.org/maps/v5/europe/ukraine.map"),
+    MapsforgeRegion("great_britain", "Marea Britanie", "🇬🇧", "110 MB", "https://download.mapsforge.org/maps/v5/europe/great_britain.map"),
+    MapsforgeRegion("poland", "Polonia", "🇵🇱", "95 MB", "https://download.mapsforge.org/maps/v5/europe/poland.map"),
+    MapsforgeRegion("ukraine", "Ucraina", "🇺🇦", "80 MB", "https://download.mapsforge.org/maps/v5/europe/ukraine.map"),
     MapsforgeRegion("austria", "Austria", "🇦🇹", "30 MB", "https://download.mapsforge.org/maps/v5/europe/austria.map"),
     MapsforgeRegion("switzerland", "Elveția", "🇨🇭", "25 MB", "https://download.mapsforge.org/maps/v5/europe/switzerland.map"),
-    MapsforgeRegion("greece", "Grecia", "🇬🇷", "35 MB", "https://download.mapsforge.org/maps/v5/europe/greece.map"),
-
-    // 🇸🇪 Suedia, 🇳🇴 Norvegia, 🇫🇮 Finlanda, 🇩🇰 Danemarca
-    MapsforgeRegion("sweden", "Suedia", "🇸🇪", "40 MB", "https://download.mapsforge.org/maps/v5/europe/sweden.map"),
-    MapsforgeRegion("norway", "Norvegia", "🇳🇴", "35 MB", "https://download.mapsforge.org/maps/v5/europe/norway.map"),
-    MapsforgeRegion("finland", "Finlanda", "🇫🇮", "30 MB", "https://download.mapsforge.org/maps/v5/europe/finland.map"),
-    MapsforgeRegion("denmark", "Danemarca", "🇩🇰", "16 MB", "https://download.mapsforge.org/maps/v5/europe/denmark.map"),
-
-    // 🇳🇱 Olanda, 🇧🇪 Belgia, 🇱🇺 Luxemburg, 🇵🇹 Portugalia, 🇮🇪 Irlanda, 🇮🇸 Islanda
-    MapsforgeRegion("netherlands", "Olanda", "🇳🇱", "20 MB", "https://download.mapsforge.org/maps/v5/europe/netherlands.map"),
-    MapsforgeRegion("belgium", "Belgia", "🇧🇪", "18 MB", "https://download.mapsforge.org/maps/v5/europe/belgium.map"),
-    MapsforgeRegion("luxembourg", "Luxemburg", "🇱🇺", "6 MB", "https://download.mapsforge.org/maps/v5/europe/luxembourg.map"),
-    MapsforgeRegion("portugal", "Portugalia", "🇵🇹", "25 MB", "https://download.mapsforge.org/maps/v5/europe/portugal.map"),
-    MapsforgeRegion("ireland", "Irlanda", "🇮🇪", "22 MB", "https://download.mapsforge.org/maps/v5/europe/ireland.map"),
-    MapsforgeRegion("iceland", "Islanda", "🇮🇸", "10 MB", "https://download.mapsforge.org/maps/v5/europe/iceland.map"),
-
-    // 🇨🇿 Cehia, 🇸🇰 Slovacia, 🇸🇮 Slovenia, 🇭🇷 Croația, 🇷🇸 Sârbia, 🇧🇦 Bosnia, 🇦🇱 Albania
-    MapsforgeRegion("czech_republic", "Cehia", "🇨🇿", "28 MB", "https://download.mapsforge.org/maps/v5/europe/czech_republic.map"),
-    MapsforgeRegion("slovakia", "Slovacia", "🇸🇰", "22 MB", "https://download.mapsforge.org/maps/v5/europe/slovakia.map"),
-    MapsforgeRegion("slovenia", "Slovenia", "🇸🇮", "15 MB", "https://download.mapsforge.org/maps/v5/europe/slovenia.map"),
-    MapsforgeRegion("croatia", "Croația", "🇭🇷", "20 MB", "https://download.mapsforge.org/maps/v5/europe/croatia.map"),
-    MapsforgeRegion("serbia", "Sârbia", "🇷🇸", "24 MB", "https://download.mapsforge.org/maps/v5/europe/serbia.map"),
-    MapsforgeRegion("bosnia_herzegovina", "Bosnia și Herțegovina", "🇧🇦", "18 MB", "https://download.mapsforge.org/maps/v5/europe/bosnia-herzegovina.map"),
-    MapsforgeRegion("albania", "Albania", "🇦🇱", "14 MB", "https://download.mapsforge.org/maps/v5/europe/albania.map"),
-
-    // 🇪🇪 Estonia, 🇱🇻 Letonia, 🇱🇹 Lituania
-    MapsforgeRegion("estonia", "Estonia", "🇪🇪", "12 MB", "https://download.mapsforge.org/maps/v5/europe/estonia.map"),
-    MapsforgeRegion("latvia", "Letonia", "🇱🇻", "14 MB", "https://download.mapsforge.org/maps/v5/europe/latvia.map"),
-    MapsforgeRegion("lithuania", "Lituania", "🇱🇹", "16 MB", "https://download.mapsforge.org/maps/v5/europe/lithuania.map"),
-
-    // America de Nord & Regiuni
-    MapsforgeRegion("us_central", "SUA - Regiunea Centrală", "🇺🇸", "110 MB", "https://download.mapsforge.org/maps/v5/north-america/us-central.map"),
-    MapsforgeRegion("us_east", "SUA - Coasta de Est", "🇺🇸", "120 MB", "https://download.mapsforge.org/maps/v5/north-america/us-east.map"),
-    MapsforgeRegion("us_west", "SUA - Coasta de Vest", "🇺🇸", "105 MB", "https://download.mapsforge.org/maps/v5/north-america/us-west.map"),
-    MapsforgeRegion("canada", "Canada (Toată țara)", "🇨🇦", "110 MB", "https://download.mapsforge.org/maps/v5/north-america/canada.map"),
-    MapsforgeRegion("mexico", "Mexic", "🇲🇽", "65 MB", "https://download.mapsforge.org/maps/v5/north-america/mexico.map")
+    MapsforgeRegion("greece", "Grecia", "🇬🇷", "35 MB", "https://download.mapsforge.org/maps/v5/europe/greece.map")
 )
+
+fun getSettingString(lang: String, key: String): String {
+    return when (lang) {
+        "English" -> when (key) {
+            "title" -> "Settings & Privacy"
+            "dark_title" -> "Dark Mode"
+            "dark_desc" -> "Apply dark theme for night vision and battery savings"
+            "csv_title" -> "Export & Import Hives (CSV)"
+            "csv_desc" -> "Backup or restore all beehives and inspection logs in CSV format, choosing where to save or open from."
+            "csv_export" -> "Export CSV"
+            "csv_import" -> "Import CSV"
+            "map_title" -> "Mapsforge Vector Maps (.map)"
+            "map_desc" -> "Search and download offline vector maps for countries and specific regions in Europe & North America"
+            "map_select" -> "Select Country / Region"
+            "map_search" -> "Search country or region..."
+            "lang_title" -> "Language"
+            "type_title" -> "Offline Map Type"
+            "type_desc" -> "Switch basemap style for optimal visibility and battery life"
+            "sync_title" -> "P2P SMS Sync"
+            "sync_desc" -> "Automatic reception of field telemetry from team via SMS"
+            else -> key
+        }
+        "Français" -> when (key) {
+            "title" -> "Paramètres & Confidentialité"
+            "dark_title" -> "Mode Sombre"
+            "dark_desc" -> "Appliquer un thème sombre pour la vision nocturne et l'économie de batterie"
+            "csv_title" -> "Exporter & Importer (CSV)"
+            "csv_desc" -> "Sauvegarder ou restaurer toutes les données en format CSV."
+            "csv_export" -> "Exporter CSV"
+            "csv_import" -> "Importer CSV"
+            "map_title" -> "Cartes vectorielles Mapsforge (.map)"
+            "map_desc" -> "Rechercher et télécharger des cartes hors-ligne"
+            "map_select" -> "Sélectionner Pays / Région"
+            "map_search" -> "Rechercher un pays ou une région..."
+            "lang_title" -> "Langue"
+            "type_title" -> "Type de carte hors-ligne"
+            "type_desc" -> "Changer le style de carte pour une visibilité optimale"
+            "sync_title" -> "Synchronisation SMS P2P"
+            "sync_desc" -> "Réception automatique de la télémétrie par SMS"
+            else -> key
+        }
+        "Magyar" -> when (key) {
+            "title" -> "Beállítások és Adatvédelem"
+            "dark_title" -> "Sötét Mód"
+            "dark_desc" -> "Sötét téma alkalmazása az éjszakai látás és akkumulátor-megtakarítás érdekében"
+            "csv_title" -> "Kaptárak Exportálása és Importálása (CSV)"
+            "csv_desc" -> "Biztonsági mentés vagy visszaállítás CSV formátumban."
+            "csv_export" -> "CSV Export"
+            "csv_import" -> "CSV Import"
+            "map_title" -> "Mapsforge Vektoros Térképek (.map)"
+            "map_desc" -> "Offline térképek keresése és letöltése"
+            "map_select" -> "Ország / Régió kiválasztása"
+            "map_search" -> "Ország vagy régió keresése..."
+            "lang_title" -> "Nyelv"
+            "type_title" -> "Offline Térkép Típusa"
+            "type_desc" -> "Alaptérkép stílus váltása az optimális láthatóságért"
+            "sync_title" -> "P2P SMS Szinkronizálás"
+            "sync_desc" -> "Telemetriai adatok automatikus fogadása SMS-ben"
+            else -> key
+        }
+        "Deutsch" -> when (key) {
+            "title" -> "Einstellungen & Datenschutz"
+            "dark_title" -> "Dunkelmodus"
+            "dark_desc" -> "Dunkles Design für Nachtsicht und Akkusparen anwenden"
+            "csv_title" -> "Bienenstöcke Export & Import (CSV)"
+            "csv_desc" -> "Sicherung oder Wiederherstellung im CSV-Format."
+            "csv_export" -> "CSV Export"
+            "csv_import" -> "CSV Import"
+            "map_title" -> "Mapsforge Vektorkarten (.map)"
+            "map_desc" -> "Offline-Vektorkarten suchen und herunterladen"
+            "map_select" -> "Land / Region auswählen"
+            "map_search" -> "Land oder Region suchen..."
+            "lang_title" -> "Sprache"
+            "type_title" -> "Offline-Kartentyp"
+            "type_desc" -> "Kartensstil für optimale Sichtbarkeit wechseln"
+            "sync_title" -> "P2P-SMS-Synchronisation"
+            "sync_desc" -> "Automatischer Empfang von Telemetriedaten per SMS"
+            else -> key
+        }
+        "Ukrainian" -> when (key) {
+            "title" -> "Налаштування та конфіденційність"
+            "dark_title" -> "Темний режим"
+            "dark_desc" -> "Темна тема для нічного бачення та економії батареї"
+            "csv_title" -> "Експорт та імпорт вуликів (CSV)"
+            "csv_desc" -> "Резервне копіювання або відновлення у форматі CSV."
+            "csv_export" -> "Експорт CSV"
+            "csv_import" -> "Імпорт CSV"
+            "map_title" -> "Векторні карти Mapsforge (.map)"
+            "map_desc" -> "Пошук та завантаження оффлайн-карт"
+            "map_select" -> "Виберіть країну / регіон"
+            "map_search" -> "Пошук країни чи регіону..."
+            "lang_title" -> "Мова"
+            "type_title" -> "Тип оффлайн-карти"
+            "type_desc" -> "Зміна стилю карти pentru кращої видимості"
+            "sync_title" -> "Синхронізація P2P SMS"
+            "sync_desc" -> "Автоматичний прийом телеметрії через SMS"
+            else -> key
+        }
+        "Russian" -> when (key) {
+            "title" -> "Настройки и конфиденциальность"
+            "dark_title" -> "Темный режим"
+            "dark_desc" -> "Темная тема для ночного видения и экономии батареи"
+            "csv_title" -> "Экспорт и импорт ульев (CSV)"
+            "csv_desc" -> "Резервное копирование или восстановление в формате CSV."
+            "csv_export" -> "Экспорт CSV"
+            "csv_import" -> "Импорт CSV"
+            "map_title" -> "Векторные карты Mapsforge (.map)"
+            "map_desc" -> "Поиск и загрузка офлайн-карт"
+            "map_select" -> "Выберите страну / регион"
+            "map_search" -> "Поиск страны или региона..."
+            "lang_title" -> "Язык"
+            "type_title" -> "Тип офлайн-карты"
+            "type_desc" -> "Изменение стиля карты для лучшей видимости"
+            "sync_title" -> "Синхронизация P2P SMS"
+            "sync_desc" -> "Автоматический прием телеметрии через SMS"
+            else -> key
+        }
+        "Bulgarian" -> when (key) {
+            "title" -> "Настройки и поверителност"
+            "dark_title" -> "Тъмен режим"
+            "dark_desc" -> "Прилагане на тъмна тема за нощно виждане и пестене на батерия"
+            "csv_title" -> "Експортиране и импортиране на кошери (CSV)"
+            "csv_desc" -> "Архивиране или възстановяване във формат CSV."
+            "csv_export" -> "Експорт CSV"
+            "csv_import" -> "Импорт CSV"
+            "map_title" -> "Векторни карти Mapsforge (.map)"
+            "map_desc" -> "Търсене и изтегляне на офлайн карти"
+            "map_select" -> "Изберете държава / регион"
+            "map_search" -> "Търсене на държава или регион..."
+            "lang_title" -> "Език"
+            "type_title" -> "Тип офлайн карта"
+            "type_desc" -> "Промяна на стила на картата за оптимална видимост"
+            "sync_title" -> "P2P SMS Синхронизация"
+            "sync_desc" -> "Автоматично приемане на телеметрия чрез SMS"
+            else -> key
+        }
+        "Portuguese" -> when (key) {
+            "title" -> "Configurações e Privacidade"
+            "dark_title" -> "Modo Escuro"
+            "dark_desc" -> "Aplicar tema escuro para visão noturna e economia de bateria"
+            "csv_title" -> "Exportar & Importar Colmeias (CSV)"
+            "csv_desc" -> "Fazer backup sau restaurar dados em formato CSV."
+            "csv_export" -> "Exportar CSV"
+            "csv_import" -> "Importar CSV"
+            "map_title" -> "Mapas Vetoriais Mapsforge (.map)"
+            "map_desc" -> "Pesquisar e baixar mapas offline"
+            "map_select" -> "Selecionar País / Região"
+            "map_search" -> "Pesquisar país ou região..."
+            "lang_title" -> "Idioma"
+            "type_title" -> "Tipo de Mapa Offline"
+            "type_desc" -> "Mudar o estilo do mapa base"
+            "sync_title" -> "Sincronização SMS P2P"
+            "sync_desc" -> "Recepção automática de telemetria por SMS"
+            else -> key
+        }
+        "Italian" -> when (key) {
+            "title" -> "Impostazioni e Privacy"
+            "dark_title" -> "Modalità Scura"
+            "dark_desc" -> "Applica tema scuro per visione notturna e risparmio batteria"
+            "csv_title" -> "Esporta & Importa Arnie (CSV)"
+            "csv_desc" -> "Esegui backup o ripristina i dati in formato CSV."
+            "csv_export" -> "Esporta CSV"
+            "csv_import" -> "Importa CSV"
+            "map_title" -> "Mappe Vettoriali Mapsforge (.map)"
+            "map_desc" -> "Cerca e scarica mappe offline"
+            "map_select" -> "Seleziona Paese / Regione"
+            "map_search" -> "Cerca paese o regione..."
+            "lang_title" -> "Lingua"
+            "type_title" -> "Tipo di Mappa Offline"
+            "type_desc" -> "Cambia lo stile della mappa di base"
+            "sync_title" -> "Sincronizzazione SMS P2P"
+            "sync_desc" -> "Ricezione automatica della telemetria via SMS"
+            else -> key
+        }
+        "Spanish" -> when (key) {
+            "title" -> "Ajustes y Privacidad"
+            "dark_title" -> "Modo Oscuro"
+            "dark_desc" -> "Aplicar tema oscuro para visión nocturna y ahorro de batería"
+            "csv_title" -> "Exportar e Importar Colmenas (CSV)"
+            "csv_desc" -> "Copia de seguridad o restauración en formato CSV."
+            "csv_export" -> "Exportar CSV"
+            "csv_import" -> "Importar CSV"
+            "map_title" -> "Mapas Vectoriales Mapsforge (.map)"
+            "map_desc" -> "Buscar y descargar mapas offline"
+            "map_select" -> "Seleccionar País / Región"
+            "map_search" -> "Buscar país o región..."
+            "lang_title" -> "Idioma"
+            "type_title" -> "Tipo de Mapa Offline"
+            "type_desc" -> "Cambiar el estilo del mapa base"
+            "sync_title" -> "Sincronización SMS P2P"
+            "sync_desc" -> "Recepción automática de telemetría por SMS"
+            else -> key
+        }
+        else -> when (key) {
+            "title" -> "Setări & Confidențialitate"
+            "dark_title" -> "Mod Întunecat (Dark Mode)"
+            "dark_desc" -> "Aplica o temă închisă la culoare pentru confort vizual nocturn și economie de baterie"
+            "csv_title" -> "Export & Import Stupi și Jurnale (CSV)"
+            "csv_desc" -> "Salvează sau restaurează toate datele despre stupi și jurnale în format CSV, alegând locația de salvare sau fișierul dorit."
+            "csv_export" -> "Exportă CSV"
+            "csv_import" -> "Importă CSV"
+            "map_title" -> "Descărcare Hărți Vectoriale Mapsforge (.map)"
+            "map_desc" -> "Caută și descarcă hărți vectoriale offline pentru țări și regiuni specifice din Europa și America de Nord"
+            "map_select" -> "Selectează Țară / Regiune"
+            "map_search" -> "Caută țară sau regiune..."
+            "lang_title" -> "Limbă / Language"
+            "type_title" -> "Tip Hartă Offline (Map Theme)"
+            "type_desc" -> "Schimbă stilul hărții de fundal pentru vizibilitate optimă în teren sau economie de baterie"
+            "sync_title" -> "Sincronizare SMS P2P"
+            "sync_desc" -> "Recepționare automată a datelor de la echipă prin SMS offline"
+            else -> key
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,7 +329,6 @@ fun SettingsScreen(
     var offlineSyncEnabled by remember { mutableStateOf(true) }
     val isOnline = remember { MapCacheManager.isNetworkAvailable(context) }
 
-    // CSV Export Launcher
     val exportCsvLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("text/csv")
     ) { uri: Uri? ->
@@ -215,16 +337,15 @@ fun SettingsScreen(
                 val success = HiveCsvExporter.exportToCsv(context, uri)
                 withContext(Dispatchers.Main) {
                     if (success) {
-                        Toast.makeText(context, "Export CSV reușit cu succes!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Export CSV reușit!", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(context, "Eroare la exportul CSV.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Eroare la export CSV.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
     }
 
-    // CSV Import Launcher
     val importCsvLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
@@ -233,9 +354,9 @@ fun SettingsScreen(
                 val success = HiveCsvExporter.importFromCsv(context, uri)
                 withContext(Dispatchers.Main) {
                     if (success) {
-                        Toast.makeText(context, "Import CSV reușit cu succes!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Import CSV reușit!", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(context, "Eroare la importul CSV.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Eroare la import CSV.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -245,7 +366,7 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (selectedLanguage == "English") "Settings & Privacy" else "Setări & Confidențialitate") },
+                title = { Text(getSettingString(selectedLanguage, "title")) },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
                         Icon(Icons.Default.Menu, contentDescription = "Meniu")
@@ -274,9 +395,9 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(if (selectedLanguage == "English") "Dark Mode" else "Mod Întunecat (Dark Mode)", style = MaterialTheme.typography.titleMedium)
+                            Text(getSettingString(selectedLanguage, "dark_title"), style = MaterialTheme.typography.titleMedium)
                             Text(
-                                if (selectedLanguage == "English") "Apply dark theme for night vision and battery savings" else "Aplica o temă închisă la culoare pentru confort vizual nocturn și economie de baterie",
+                                getSettingString(selectedLanguage, "dark_desc"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -299,14 +420,11 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = if (selectedLanguage == "English") "Export & Import Hives (CSV)" else "Export & Import Stupi și Jurnale (CSV)",
+                            text = getSettingString(selectedLanguage, "csv_title"),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = if (selectedLanguage == "English")
-                                "Backup or restore all beehives and inspection logs in CSV format, choosing where to save or open from."
-                            else
-                                "Salvează sau restaurează toate datele despre stupi și jurnale în format CSV, alegând locația de salvare sau fișierul dorit.",
+                            text = getSettingString(selectedLanguage, "csv_desc"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -322,7 +440,7 @@ fun SettingsScreen(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(if (selectedLanguage == "English") "Export CSV" else "Exportă CSV")
+                                Text(getSettingString(selectedLanguage, "csv_export"))
                             }
 
                             OutlinedButton(
@@ -331,7 +449,7 @@ fun SettingsScreen(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(if (selectedLanguage == "English") "Import CSV" else "Importă CSV")
+                                Text(getSettingString(selectedLanguage, "csv_import"))
                             }
                         }
                     }
@@ -354,14 +472,11 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = if (selectedLanguage == "English") "Mapsforge Vector Maps (.map)" else "Descărcare Hărți Vectoriale Mapsforge (.map)",
+                            text = getSettingString(selectedLanguage, "map_title"),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = if (selectedLanguage == "English")
-                                "Search and download offline vector maps for countries and specific regions in Europe & North America"
-                            else
-                                "Caută și descarcă hărți vectoriale offline pentru țări și regiuni specifice din Europa și America de Nord",
+                            text = getSettingString(selectedLanguage, "map_desc"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -375,7 +490,7 @@ fun SettingsScreen(
                                 value = "${selectedRegion.flag} ${selectedRegion.name} (${selectedRegion.sizeMb})",
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text(if (selectedLanguage == "English") "Select Country / Region" else "Selectează Țară / Regiune") },
+                                label = { Text(getSettingString(selectedLanguage, "map_select")) },
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion) },
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -389,11 +504,10 @@ fun SettingsScreen(
                                 },
                                 modifier = Modifier.heightIn(max = 320.dp)
                             ) {
-                                // Search Input Field
                                 OutlinedTextField(
                                     value = searchQuery,
                                     onValueChange = { searchQuery = it },
-                                    placeholder = { Text(if (selectedLanguage == "English") "Search country or region (e.g. Bavaria, Transilvania)..." else "Caută țară sau regiune (ex. Transilvania, Bavaria)...") },
+                                    placeholder = { Text(getSettingString(selectedLanguage, "map_search")) },
                                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -414,14 +528,13 @@ fun SettingsScreen(
                                     }
                                 } else {
                                     DropdownMenuItem(
-                                        text = { Text(if (selectedLanguage == "English") "No countries or regions found" else "Nicio țară sau regiune găsită") },
+                                        text = { Text("No regions found") },
                                         onClick = {}
                                     )
                                 }
                             }
                         }
 
-                        // Network status indicator
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -432,23 +545,11 @@ fun SettingsScreen(
                                 tint = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                             )
                             Text(
-                                text = if (isOnline)
-                                    (if (selectedLanguage == "English") "Active WiFi/Cellular connection" else "Conexiune Internet Activă")
-                                else
-                                    (if (selectedLanguage == "English") "Offline Mode" else "Fără conexiune la internet"),
+                                text = if (isOnline) "Online" else "Offline",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                             )
                         }
-
-                        Text(
-                            text = if (isRegionDownloaded)
-                                (if (selectedLanguage == "English") "Status: ${selectedRegion.name} saved locally 🟢" else "Stare: ${selectedRegion.name} salvată local (.map) 🟢")
-                            else
-                                (if (selectedLanguage == "English") "Status: ${selectedRegion.name} not downloaded 🔴" else "Stare: ${selectedRegion.name} nedescărcată 🔴"),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (isRegionDownloaded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                        )
 
                         if (isDownloading) {
                             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -457,7 +558,7 @@ fun SettingsScreen(
                                     modifier = Modifier.fillMaxWidth()
                                 )
                                 Text(
-                                    text = "Descărcare ${selectedRegion.name}... ${(downloadProgress * 100).toInt()}%",
+                                    text = "Download... ${(downloadProgress * 100).toInt()}%",
                                     style = MaterialTheme.typography.labelSmall
                                 )
                             }
@@ -471,7 +572,7 @@ fun SettingsScreen(
                                 enabled = !isDownloading,
                                 onClick = {
                                     if (!MapCacheManager.isNetworkAvailable(context)) {
-                                        Toast.makeText(context, "Fără conexiune la internet!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "No internet connection!", Toast.LENGTH_SHORT).show()
                                     } else {
                                         isDownloading = true
                                         scope.launch(Dispatchers.IO) {
@@ -484,9 +585,9 @@ fun SettingsScreen(
                                                     isDownloading = false
                                                     if (success) {
                                                         isRegionDownloaded = true
-                                                        Toast.makeText(context, "Hartă ${selectedRegion.name} descărcată cu succes!", Toast.LENGTH_LONG).show()
+                                                        Toast.makeText(context, "Map downloaded successfully!", Toast.LENGTH_LONG).show()
                                                     } else {
-                                                        Toast.makeText(context, "A apărut o eroare la descărcare.", Toast.LENGTH_SHORT).show()
+                                                        Toast.makeText(context, "Download error.", Toast.LENGTH_SHORT).show()
                                                     }
                                                 }
                                             )
@@ -500,7 +601,7 @@ fun SettingsScreen(
                                     contentDescription = null,
                                     modifier = Modifier.padding(end = 6.dp)
                                 )
-                                Text(if (selectedLanguage == "English") "Download" else "Descarcă")
+                                Text("Download")
                             }
 
                             if (isRegionDownloaded) {
@@ -508,7 +609,7 @@ fun SettingsScreen(
                                     onClick = {
                                         MapCacheManager.deleteMapsforgeMap(context, selectedRegion.id)
                                         isRegionDownloaded = false
-                                        Toast.makeText(context, "Fișier șters!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Deleted!", Toast.LENGTH_SHORT).show()
                                     }
                                 ) {
                                     Icon(
@@ -517,7 +618,7 @@ fun SettingsScreen(
                                         tint = MaterialTheme.colorScheme.error,
                                         modifier = Modifier.padding(end = 4.dp)
                                     )
-                                    Text("Șterge", color = MaterialTheme.colorScheme.error)
+                                    Text("Delete", color = MaterialTheme.colorScheme.error)
                                 }
                             }
                         }
@@ -525,7 +626,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Language Selection Card
+            // Language Selection Card with Flags (using AppLocalization.supportedLanguages)
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth()
@@ -534,13 +635,15 @@ fun SettingsScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(if (selectedLanguage == "English") "Language" else "Limbă / Language", style = MaterialTheme.typography.titleMedium)
+                        val currentDisplay = AppLocalization.supportedLanguages.find { it.first == selectedLanguage }?.second ?: selectedLanguage
+
+                        Text(getSettingString(selectedLanguage, "lang_title"), style = MaterialTheme.typography.titleMedium)
                         ExposedDropdownMenuBox(
                             expanded = expandedLang,
                             onExpandedChange = { expandedLang = !expandedLang }
                         ) {
                             OutlinedTextField(
-                                value = selectedLanguage,
+                                value = currentDisplay,
                                 onValueChange = {},
                                 readOnly = true,
                                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLang) },
@@ -552,20 +655,15 @@ fun SettingsScreen(
                                 expanded = expandedLang,
                                 onDismissRequest = { expandedLang = false }
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Română") },
-                                    onClick = {
-                                        onLanguageChange("Română")
-                                        expandedLang = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("English") },
-                                    onClick = {
-                                        onLanguageChange("English")
-                                        expandedLang = false
-                                    }
-                                )
+                                AppLocalization.supportedLanguages.forEach { (code, display) ->
+                                    DropdownMenuItem(
+                                        text = { Text(display) },
+                                        onClick = {
+                                            onLanguageChange(code)
+                                            expandedLang = false
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
@@ -581,9 +679,9 @@ fun SettingsScreen(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(if (selectedLanguage == "English") "Offline Map Type" else "Tip Hartă Offline (Map Theme)", style = MaterialTheme.typography.titleMedium)
+                        Text(getSettingString(selectedLanguage, "type_title"), style = MaterialTheme.typography.titleMedium)
                         Text(
-                            if (selectedLanguage == "English") "Switch basemap style for optimal visibility and battery life" else "Schimbă stilul hărții de fundal pentru vizibilitate optimă în teren sau economie de baterie",
+                            getSettingString(selectedLanguage, "type_desc"),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -623,9 +721,9 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(if (selectedLanguage == "English") "P2P SMS Sync" else "Sincronizare SMS P2P", style = MaterialTheme.typography.titleMedium)
+                            Text(getSettingString(selectedLanguage, "sync_title"), style = MaterialTheme.typography.titleMedium)
                             Text(
-                                if (selectedLanguage == "English") "Automatic reception of field telemetry from team via SMS" else "Recepționare automată a datelor de la echipă prin SMS offline",
+                                getSettingString(selectedLanguage, "sync_desc"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
