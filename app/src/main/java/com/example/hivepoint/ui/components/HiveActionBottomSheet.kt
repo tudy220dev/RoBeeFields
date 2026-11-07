@@ -77,6 +77,7 @@ import com.example.hivepoint.model.InspectionLog
 import com.example.hivepoint.model.QueenState
 import com.example.hivepoint.model.SwarmingTendency
 import com.example.hivepoint.model.Temperament
+import com.example.hivepoint.util.AppLocalization
 import com.example.hivepoint.util.HiveSerializer
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -114,7 +115,6 @@ fun HiveActionBottomSheet(
     onStartMapPickMode: () -> Unit
 ) {
     val context = LocalContext.current
-    val isEn = selectedLanguage == "English"
     val dbHelper = remember { HiveDbHelper(context) }
     val scope = rememberCoroutineScope()
 
@@ -131,14 +131,13 @@ fun HiveActionBottomSheet(
     }
 
     val latestLog = logs.firstOrNull()
-    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", if (isEn) Locale.US else Locale("ro", "RO")) }
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy, HH:mm", if (selectedLanguage == "English") Locale.US else Locale("ro", "RO")) }
     val lastLogText = if (latestLog != null) {
-        if (isEn)
-            "Last log: ${dateFormat.format(Date(latestLog.timestamp))} | Queen: ${latestLog.queenState.toDisplayName(selectedLanguage)}"
-        else
-            "Ultimul jurnal: ${dateFormat.format(Date(latestLog.timestamp))} | Regină: ${latestLog.queenState.toDisplayName(selectedLanguage)}"
+        val lastLogPrefix = AppLocalization.get(selectedLanguage, "Ultimul jurnal", "Last log", "Dernier journal", "Utolsó napló", "Letztes Protokoll", "Останній журнал", "Последний журнал", "Последен дневник", "Último registro", "Ultimo registro", "Último registro")
+        val queenLabel = AppLocalization.get(selectedLanguage, "Regină", "Queen", "Reine", "Anya", "Königin", "Матка", "Матка", "Майка", "Rainha", "Regina", "Reina")
+        "$lastLogPrefix: ${dateFormat.format(Date(latestLog.timestamp))} | $queenLabel: ${latestLog.queenState.toDisplayName(selectedLanguage)}"
     } else {
-        if (isEn) "No inspection logs recorded yet." else "Niciun jurnal înregistrat încă."
+        AppLocalization.get(selectedLanguage, "Niciun jurnal înregistrat încă.", "No inspection logs recorded yet.", "Aucun journal d'inspection enregistré.", "Még nincs naplóbejegyzés.", "Noch keine Inspektionsprotokolle.", "Ще немає записів огляду.", "Записей осмотра пока нет.", "Все още няма записани дневници.", "Nenhum registro de inspeção salvo.", "Nessun registro ancora salvato.", "Sin registros de inspección aún.")
     }
 
     val photoPickerLauncher = rememberLauncherForActivityResult(
@@ -151,7 +150,7 @@ fun HiveActionBottomSheet(
                 updatedAt = System.currentTimeMillis()
             )
             onUpdateHive(updated)
-            Toast.makeText(context, if (isEn) "${uris.size} photos added successfully!" else "${uris.size} poze adăugate cu succes!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, AppLocalization.get(selectedLanguage, "${uris.size} poze adăugate cu succes!", "${uris.size} photos added successfully!", "${uris.size} photos ajoutées!", "${uris.size} kép sikeresen hozzáadva!", "${uris.size} Fotos hinzugefügt!", "${uris.size} фото успішно додано!", "${uris.size} фото успешно добавлено!", "${uris.size} снимки са добавени!", "${uris.size} fotos adicionadas!", "${uris.size} foto aggiunte!", "¡${uris.size} fotos añadidas!"), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -173,7 +172,7 @@ fun HiveActionBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = if (isEn) "🐝 Hive Menu: ${hive.hiveNumber}" else "🐝 Meniu Stup: ${hive.hiveNumber}",
+                    text = "${AppLocalization.get(selectedLanguage, "🐝 Meniu Stup", "🐝 Hive Menu", "🐝 Menu Ruche", "🐝 Kaptár Menü", "🐝 Bienenstock-Menü", "🐝 Меню вулика", "🐝 Меню улья", "🐝 Меню кошер", "🐝 Menu Colmeia", "🐝 Menu Arnia", "🐝 Menú Colmena")}: ${hive.hiveNumber}",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
@@ -193,14 +192,14 @@ fun HiveActionBottomSheet(
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(Icons.Default.History, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                        Text(if (isEn) "View Logs (${logs.size})" else "Vezi Jurnale (${logs.size})")
+                        Text(AppLocalization.get(selectedLanguage, "Vezi Jurnale (${logs.size})", "View Logs (${logs.size})", "Voir Journaux (${logs.size})", "Naplók (${logs.size})", "Protokolle (${logs.size})", "Журнали (${logs.size})", "Журналы (${logs.size})", "Дневници (${logs.size})", "Ver Registros (${logs.size})", "Vedi Registri (${logs.size})", "Ver Registros (${logs.size})"))
                     }
                     Button(
                         onClick = { showCreateLogDialog = true },
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                        Text(if (isEn) "Create Log" else "Crează Jurnal")
+                        Text(AppLocalization.get(selectedLanguage, "Creează Jurnal", "Create Log", "Créer Journal", "Új Napló", "Neues Protokoll", "Створити журнал", "Создать журнал", "Нов дневник", "Criar Registro", "Crea Registro", "Crear Registro"))
                     }
                 }
             }
@@ -208,20 +207,20 @@ fun HiveActionBottomSheet(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Move Hive (GPS Location)" else "Mută Stupul (Move Location)") },
-                supportingContent = { Text(if (isEn) "Change GPS position on map or coordinates" else "Schimbă poziția GPS pe hartă sau prin coordonate") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Mută Stupul (Locație GPS)", "Move Hive (GPS Location)", "Déplacer la Ruche (Position GPS)", "Kaptár Áthelyezése (GPS)", "Bienenstock Verschieben (GPS)", "Перемістити вулик (GPS)", "Переместить улей (GPS)", "Преместване на кошер (GPS)", "Mover Colmeia (Posição GPS)", "Sposta Arnia (Posizione GPS)", "Mover Colmena (Posición GPS)")) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Schimbă poziția GPS pe hartă sau prin coordonate", "Change GPS position on map or coordinates", "Changer la position GPS sur la carte", "GPS pozíció módosítása a térképen", "GPS-Position auf Karte ändern", "Змінити позицію GPS на карті", "Изменить позицию GPS на карте", "Промяна на GPS позиция", "Mudar posição GPS no mapa", "Cambia posizione GPS sulla mappa", "Cambiar posición GPS en el mapa")) },
                 leadingContent = { Icon(Icons.Default.MyLocation, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
                     TextButton(onClick = { showMoveDialog = true }) {
-                        Text(if (isEn) "Move" else "Mută")
+                        Text(AppLocalization.get(selectedLanguage, "Mută", "Move", "Déplacer", "Áthelyezés", "Verschieben", "Перемістити", "Переместить", "Преместване", "Mover", "Sposta", "Mover"))
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Weather Forecast (Ventusky 🌤️)" else "Prognoză Meteo (Ventusky 🌤️)") },
-                supportingContent = { Text(if (isEn) "Open live weather forecast at hive coordinates" else "Deschide prognoza meteo live pe hartă la coordonatele stupului") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Prognoză Meteo (Ventusky 🌤️)", "Weather Forecast (Ventusky 🌤️)", "Météo Live (Ventusky 🌤️)", "Időjárás (Ventusky 🌤️)", "Wettervorhersage (Ventusky 🌤️)", "Прогноз погоди (Ventusky 🌤️)", "Прогноз погоды (Ventusky 🌤️)", "Прогноза за времето (Ventusky 🌤️)", "Previsão do Tempo (Ventusky 🌤️)", "Previsioni Meteo (Ventusky 🌤️)", "Pronóstico del Tiempo (Ventusky 🌤️)")) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Deschide prognoza meteo live pe hartă la coordonatele stupului", "Open live weather forecast at hive coordinates", "Ouvrir la météo aux coordonnées de la ruche", "Élő időjárás megnyitása a kaptár koordinátáinál", "Live-Wetter an den Bienenstock-Koordinaten öffnen", "Відкрити прогноз погоди за координатами вулика", "Открыть прогноз погоды по координатам улья", "Прогноза за времето по координати", "Abrir previsão do tempo nas coordenadas", "Apri previsioni meteo a coordinate arnia", "Abrir pronóstico del tiempo en coordenadas")) },
                 leadingContent = { Icon(Icons.Default.WbCloudy, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
@@ -234,68 +233,68 @@ fun HiveActionBottomSheet(
                             try {
                                 context.startActivity(viewIntent)
                             } catch (_: Exception) {
-                                Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, AppLocalization.get(selectedLanguage, "Niciun browser găsit", "No browser found", "Aucun navigateur trouvé", "Böngésző nem található", "Kein Browser gefunden", "Браузер не знайдено", "Браузер не найден", "Не е намерен браузър", "Nenhum navegador encontrado", "Nessun browser trovato", "Navegador no encontrado"), Toast.LENGTH_SHORT).show()
                             }
                         }
                     ) {
-                        Text(if (isEn) "Weather" else "Vreme")
+                        Text(AppLocalization.get(selectedLanguage, "Vreme", "Weather", "Météo", "Időjárás", "Wetter", "Погода", "Погода", "Време", "Tempo", "Meteo", "Tiempo"))
                     }
                 }
             )
 
             if (hive.photoUris.isNotEmpty()) {
                 ListItem(
-                    headlineContent = { Text(if (isEn) "Photo Gallery (${hive.photoUris.size}) 📸" else "Galerie Foto (${hive.photoUris.size} poze) 📸", color = MaterialTheme.colorScheme.primary) },
-                    supportingContent = { Text(if (isEn) "View, add or delete photos" else "Vizualizează, adaugă sau șterge poze din galerie") },
+                    headlineContent = { Text("${AppLocalization.get(selectedLanguage, "Galerie Foto", "Photo Gallery", "Galerie Photo", "Fotógaléria", "Fotogalerie", "Фотогалерея", "Фотогалерея", "Фотогалерия", "Galeria de Fotos", "Galleria Fotografica", "Galería de Fotos")} (${hive.photoUris.size}) 📸", color = MaterialTheme.colorScheme.primary) },
+                    supportingContent = { Text(AppLocalization.get(selectedLanguage, "Vizualizează, adaugă sau șterge poze din galerie", "View, add or delete photos", "Voir, ajouter ou supprimer des photos", "Fotók megtekintése, hozzáadása vagy törlése", "Fotos anzeigen, hinzufügen oder löschen", "Переглянути, додати або видалити фото", "Просмотреть, добавить или удалить фото", "Преглед, добавяне или изтриване на снимки", "Ver, adicionar ou excluir fotos", "Visualizza, aggiungi o elimina foto", "Ver, añadir o eliminar fotos")) },
                     leadingContent = { Icon(Icons.Default.Image, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                     modifier = Modifier.fillMaxWidth(),
                     trailingContent = {
                         Button(onClick = { showGalleryDialog = true }) {
-                            Text(if (isEn) "Gallery (${hive.photoUris.size})" else "Galerie (${hive.photoUris.size})")
+                            Text("${AppLocalization.get(selectedLanguage, "Galerie", "Gallery", "Galerie", "Galéria", "Galerie", "Галерея", "Галерея", "Галерия", "Galeria", "Galleria", "Galería")} (${hive.photoUris.size})")
                         }
                     }
                 )
             }
 
             ListItem(
-                headlineContent = { Text(if (isEn) "View Hive / Full Details" else "Vezi Stup / Detalii Complete") },
-                supportingContent = { Text(if (isEn) "Display complete hive details" else "Afișează detaliile complete ale stupului") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Vezi Stup / Detalii Complete", "View Hive / Full Details", "Voir la Ruche / Détails Complets", "Kaptár Részletei", "Bienenstock-Details", "Переглянути вулик / Повні деталі", "Просмотреть улей / Полные детали", "Преглед на кошер / Детайли", "Ver Colmeia / Detalhes Completos", "Vedi Arnia / Dettagli Completi", "Ver Colmena / Detalles Completos")) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Afișează detaliile complete ale stupului", "Display complete hive details", "Afficher tous les détails de la ruche", "Kaptár összes részletének megjelenítése", "Vollständige Bienenstock-Details anzeigen", "Відобразити повні деталі вулика", "Отобразить полные детали улья", "Показване на пълните детайли", "Exibir detalhes completos da colmeia", "Mostra dettagli completi dell'arnia", "Mostrar detalles completos de la colmena")) },
                 leadingContent = { Icon(Icons.Default.Visibility, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
                     TextButton(onClick = { showDetailsDialog = true }) {
-                        Text(if (isEn) "Details" else "Detalii")
+                        Text(AppLocalization.get(selectedLanguage, "Detalii", "Details", "Détails", "Részletek", "Details", "Деталі", "Детали", "Детайли", "Detalhes", "Dettagli", "Detalles"))
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Edit Hive" else "Editează Stup") },
-                supportingContent = { Text(if (isEn) "Change hive number, status, or notes" else "Schimbă denumirea, starea sau notele stupului") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Editează Stup", "Edit Hive", "Modifier la Ruche", "Kaptár Szerkesztése", "Bienenstock Bearbeiten", "Редагувати вулик", "Редактировать улей", "Редактиране на кошер", "Editar Colmeia", "Modifica Arnia", "Editar Colmena")) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Schimbă denumirea, starea sau notele stupului", "Change hive number, status, or notes", "Changer le numéro, le statut ou les notes", "Szám, állapot vagy megjegyzések módosítása", "Nummer, Status oder Notizen ändern", "Змінити номер, статус або примітки", "Изменить номер, статус или заметки", "Промяна на номер, състояние или бележки", "Alterar número, status ou notas", "Modifica numero, stato o note", "Cambiar número, estado o notas")) },
                 leadingContent = { Icon(Icons.Default.Edit, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
                     TextButton(onClick = { showEditDialog = true }) {
-                        Text(if (isEn) "Edit" else "Editează")
+                        Text(AppLocalization.get(selectedLanguage, "Editează", "Edit", "Modifier", "Szerkesztés", "Bearbeiten", "Редагувати", "Редактировать", "Редактиране", "Editar", "Modifica", "Editar"))
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Add Photos" else if (hive.photoUris.isNotEmpty()) "Adaugă Mai Multe Poze" else "Adaugă Poze Stup") },
-                supportingContent = { Text(if (isEn) "${hive.photoUris.size} saved photos" else if (hive.photoUris.isNotEmpty()) "${hive.photoUris.size} poze salvate." else "Selectează poze din galerie") },
+                headlineContent = { Text(if (hive.photoUris.isNotEmpty()) AppLocalization.get(selectedLanguage, "Adaugă Mai Multe Poze", "Add More Photos", "Ajouter Plus de Photos", "Több Kép Hozzáadása", "Mehr Fotos Hinzufügen", "Додати більше фото", "Добавить больше фото", "Добавяне на още снимки", "Adicionar Mais Fotos", "Aggiungi Altre Foto", "Añadir Más Fotos") else AppLocalization.get(selectedLanguage, "Adaugă Poze Stup", "Add Photos", "Ajouter des Photos", "Fotók Hozzáadása", "Fotos Hinzufügen", "Додати фото вулика", "Добавить фото улья", "Добавяне на снимки", "Adicionar Fotos", "Aggiungi Foto", "Añadir Fotos")) },
+                supportingContent = { Text(if (hive.photoUris.isNotEmpty()) AppLocalization.get(selectedLanguage, "${hive.photoUris.size} poze salvate.", "${hive.photoUris.size} saved photos.", "${hive.photoUris.size} photos enregistrées.", "${hive.photoUris.size} mentett kép.", "${hive.photoUris.size} gespeicherte Fotos.", "${hive.photoUris.size} збережених фото.", "${hive.photoUris.size} сохраненных фото.", "${hive.photoUris.size} запазени снимки.", "${hive.photoUris.size} fotos salvas.", "${hive.photoUris.size} foto salvate.", "${hive.photoUris.size} fotos guardadas.") else AppLocalization.get(selectedLanguage, "Selectează poze din galerie", "Choose photos from gallery", "Choisir des photos dans la galerie", "Válasszon képeket a galériából", "Fotos aus Galerie auswählen", "Виберіть фото з галереї", "Выберите фото из галереи", "Изберете снимки от галерията", "Escolha fotos da galeria", "Scegli foto dalla galleria", "Elegir fotos de la galería")) },
                 leadingContent = { Icon(Icons.Default.AddAPhoto, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
                     TextButton(onClick = { photoPickerLauncher.launch("image/*") }) {
-                        Text(if (isEn) "Choose Photos" else "Alege Poze")
+                        Text(AppLocalization.get(selectedLanguage, "Alege Poze", "Choose Photos", "Choisir Photos", "Fotók Kiválasztása", "Fotos Wählen", "Вибрати фото", "Выбрать фото", "Избор на снимки", "Escolher Fotos", "Scegli Foto", "Elegir Fotos"))
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Share Hash (SMS / P2P)" else "Trimite Hash (SMS / P2P)") },
-                supportingContent = { Text(if (isEn) "Generate and share P2P compact code" else "Generează și trimite codul compact P2P al stupului") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Trimite Hash (SMS / P2P)", "Share Hash (SMS / P2P)", "Partager Hash (SMS / P2P)", "Hash Megosztása (SMS / P2P)", "Hash Teilen (SMS / P2P)", "Поділитися Hash (SMS / P2P)", "Поделиться Hash (SMS / P2P)", "Споделяне на Hash (SMS / P2P)", "Compartilhar Hash (SMS / P2P)", "Condividi Hash (SMS / P2P)", "Compartir Hash (SMS / P2P)")) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Generează și trimite codul compact P2P al stupului", "Generate and share P2P compact code", "Générer et partager le code P2P compact", "Kompakt P2P kód generálása és megosztása", "Kompakten P2P-Code generieren und teilen", "Згенерувати та поділитися кодом P2P", "Сгенерировать и поделиться кодом P2P", "Генериране и споделяне на P2P код", "Gerar e compartilhar código P2P", "Genera e condividi codice P2P", "Generar y compartir código P2P")) },
                 leadingContent = { Icon(Icons.Default.Share, contentDescription = null) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
@@ -306,19 +305,19 @@ fun HiveActionBottomSheet(
                                 type = "text/plain"
                                 putExtra(Intent.EXTRA_TEXT, hash)
                             }
-                            context.startActivity(Intent.createChooser(shareIntent, if (isEn) "Share Hive Hash P2P" else "Trimite Hash Stup P2P"))
-                            Toast.makeText(context, if (isEn) "Hash generated successfully!" else "Hash generat cu succes!", Toast.LENGTH_SHORT).show()
+                            context.startActivity(Intent.createChooser(shareIntent, AppLocalization.get(selectedLanguage, "Trimite Hash Stup P2P", "Share Hive Hash P2P", "Partager Hash P2P", "P2P Hash Megosztása", "P2P-Hash Teilen", "Поділитися P2P Hash", "Поделиться P2P Hash", "Споделяне на P2P Hash", "Compartilhar Hash P2P", "Condividi Hash P2P", "Compartir Hash P2P")))
+                            Toast.makeText(context, AppLocalization.get(selectedLanguage, "Hash generat cu succes!", "Hash generated successfully!", "Hash généré avec succès!", "Hash sikeresen generálva!", "Hash erfolgreich generiert!", "Hash успішно створено!", "Hash успешно создан!", "Hash е генериран успешно!", "Hash gerado com sucesso!", "Hash generato con successo!", "¡Hash generado con éxito!"), Toast.LENGTH_SHORT).show()
                             onDismiss()
                         }
                     ) {
-                        Text(if (isEn) "Share Hash" else "Trimite Hash")
+                        Text(AppLocalization.get(selectedLanguage, "Trimite Hash", "Share Hash", "Partager Hash", "Hash Megosztása", "Hash Teilen", "Поділитися", "Поделиться", "Споделяне", "Compartilhar", "Condividi", "Compartir"))
                     }
                 }
             )
 
             ListItem(
-                headlineContent = { Text(if (isEn) "Delete Hive" else "Șterge Stup", color = MaterialTheme.colorScheme.error) },
-                supportingContent = { Text(if (isEn) "Permanently remove pin from map and database" else "Elimină definitiv pinul de pe hartă și din baza de date") },
+                headlineContent = { Text(AppLocalization.get(selectedLanguage, "Șterge Stup", "Delete Hive", "Supprimer la Ruche", "Kaptár Törlése", "Bienenstock Löschen", "Видалити вулик", "Удалить улей", "Изтриване на кошер", "Excluir Colmeia", "Elimina Arnia", "Eliminar Colmena"), color = MaterialTheme.colorScheme.error) },
+                supportingContent = { Text(AppLocalization.get(selectedLanguage, "Elimină definitiv pinul de pe hartă și din baza de date", "Permanently remove pin from map and database", "Supprimer définitivement de la carte et de la base de données", "Végleges törlés a térképről és az adatbázisból", "Dauerhaft von Karte und Datenbank entfernen", "Остаточно видалити з карти та бази даних", "Окончательно удалить с карты и из базы данных", "Завинаги премахване от картата и базата данни", "Remover permanentemente do mapa e banco de dados", "Rimuovi definitivamente da mappa e database", "Eliminar permanentemente del mapa y la base de datos")) },
                 leadingContent = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingContent = {
@@ -328,7 +327,7 @@ fun HiveActionBottomSheet(
                             onDismiss()
                         }
                     ) {
-                        Text(if (isEn) "Delete" else "Șterge", color = MaterialTheme.colorScheme.error)
+                        Text(AppLocalization.get(selectedLanguage, "Șterge", "Delete", "Supprimer", "Törlés", "Löschen", "Видалити", "Удалить", "Изтриване", "Excluir", "Elimina", "Eliminar"), color = MaterialTheme.colorScheme.error)
                     }
                 }
             )
@@ -336,8 +335,9 @@ fun HiveActionBottomSheet(
     }
 
     if (showMoveDialog) {
+        val elementPrefix = AppLocalization.get(selectedLanguage, "Stup", "Hive", "Ruche", "Kaptár", "Bienenstock", "Вулик", "Улей", "Кошер", "Colmeia", "Arnia", "Colmena")
         MoveLocationDialog(
-            elementName = if (isEn) "Hive ${hive.hiveNumber}" else "Stup ${hive.hiveNumber}",
+            elementName = "$elementPrefix ${hive.hiveNumber}",
             currentLat = hive.latitude ?: appCurrentLat,
             currentLon = hive.longitude ?: appCurrentLon,
             appCurrentLat = appCurrentLat,
@@ -368,7 +368,7 @@ fun HiveActionBottomSheet(
                     dbHelper.insertInspectionLog(newLog)
                     logs = dbHelper.getInspectionLogsForHive(hive.id)
                     showCreateLogDialog = false
-                    Toast.makeText(context, if (isEn) "Inspection log saved successfully!" else "Jurnal de inspecție salvat cu succes!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, AppLocalization.get(selectedLanguage, "Jurnal de inspecție salvat cu succes!", "Inspection log saved successfully!", "Journal d'inspection enregistré avec succès!", "Ellenőrzési napló sikeresen elmentve!", "Inspektionsprotokoll erfolgreich gespeichert!", "Журнал огляду успішно збережено!", "Журнал осмотра успешно сохранен!", "Дневникът е запазен успешно!", "Registro de inspeção salvo com sucesso!", "Registro di ispezione salvato con successo!", "¡Registro de inspección guardado con éxito!"), Toast.LENGTH_SHORT).show()
                 }
             }
         )

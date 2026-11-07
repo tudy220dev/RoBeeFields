@@ -86,6 +86,7 @@ import com.example.hivepoint.ui.screens.AboutScreen
 import com.example.hivepoint.ui.screens.AddHiveScreen
 import com.example.hivepoint.ui.screens.SettingsScreen
 import com.example.hivepoint.ui.theme.HivePointTheme
+import com.example.hivepoint.util.AppLocalization
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -274,7 +275,7 @@ fun HivePointApp(
 
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Default.Map, contentDescription = null) },
-                        label = { Text(if (selectedLanguage == "English") "Main Map" else "Harta Principală") },
+                        label = { Text(AppLocalization.navMap(selectedLanguage)) },
                         selected = currentScreen is Screen.Map,
                         onClick = {
                             currentScreen = Screen.Map
@@ -283,7 +284,7 @@ fun HivePointApp(
                     )
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Default.AddLocation, contentDescription = null) },
-                        label = { Text(if (selectedLanguage == "English") "Add New Hive" else "Adaugă Stup Nou") },
+                        label = { Text(AppLocalization.navAddHive(selectedLanguage)) },
                         selected = currentScreen is Screen.AddHive,
                         onClick = {
                             currentScreen = Screen.AddHive
@@ -292,7 +293,7 @@ fun HivePointApp(
                     )
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                        label = { Text(if (selectedLanguage == "English") "Settings" else "Setări") },
+                        label = { Text(AppLocalization.navSettings(selectedLanguage)) },
                         selected = currentScreen is Screen.Settings,
                         onClick = {
                             currentScreen = Screen.Settings
@@ -301,7 +302,7 @@ fun HivePointApp(
                     )
                     NavigationDrawerItem(
                         icon = { Icon(Icons.Default.Info, contentDescription = null) },
-                        label = { Text(if (selectedLanguage == "English") "About" else "Despre") },
+                        label = { Text(AppLocalization.navAbout(selectedLanguage)) },
                         selected = currentScreen is Screen.About,
                         onClick = {
                             currentScreen = Screen.About
@@ -312,7 +313,7 @@ fun HivePointApp(
                     Spacer(modifier = Modifier.weight(1f))
                     HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
                     Text(
-                        text = "RoBee Fields v0.6.0 (Field Edition)",
+                        text = "RoBee Fields v0.6.1 (Field Edition)",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 12.dp, bottom = 16.dp)
@@ -473,6 +474,7 @@ fun MapScreenWithDrawer(
                 userLocation = Pair(currentLat, currentLon),
                 mapType = mapType,
                 isDarkTheme = isDarkTheme,
+                selectedLanguage = selectedLanguage,
                 onHiveClick = { clickedHive ->
                     if (clickedHive.apiaryId == "apiary_complex" || clickedHive.hiveNumber.startsWith("🏠")) {
                         selectedApiaryForMenu = clickedHive
@@ -488,7 +490,11 @@ fun MapScreenWithDrawer(
                             updatedAt = System.currentTimeMillis()
                         )
                         onUpdateHive(updated)
-                        Toast.makeText(context, "Locație actualizată pe hartă pentru ${elementToMove!!.hiveNumber}!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            AppLocalization.get(selectedLanguage, "Locație actualizată pe hartă pentru ${elementToMove!!.hiveNumber}!", "Map location updated for ${elementToMove!!.hiveNumber}!", "Emplacement mis à jour pour ${elementToMove!!.hiveNumber}!", "Helyszín frissítve: ${elementToMove!!.hiveNumber}!", "Standort aktualisiert für ${elementToMove!!.hiveNumber}!", "Локацію оновлено для ${elementToMove!!.hiveNumber}!", "Локация обновлена для ${elementToMove!!.hiveNumber}!", "Местоположението е обновено за ${elementToMove!!.hiveNumber}!", "Localização atualizada para ${elementToMove!!.hiveNumber}!", "Posizione aggiornata per ${elementToMove!!.hiveNumber}!", "Ubicación actualizada para ${elementToMove!!.hiveNumber}!"),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         elementToMove = null
                     } else {
                         longClickCoords = Pair(lat, lon)
@@ -509,9 +515,9 @@ fun MapScreenWithDrawer(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("📍 Atinge pe hartă noua locație pentru: ${moving.hiveNumber}")
+                        Text(AppLocalization.get(selectedLanguage, "📍 Atinge pe hartă noua locație pentru: ${moving.hiveNumber}", "📍 Tap on map new location for: ${moving.hiveNumber}", "📍 Touchez la carte pour la nouvelle position de: ${moving.hiveNumber}", "📍 Bökj a térképre az új helyért: ${moving.hiveNumber}", "📍 Tippen Sie auf die Karte für: ${moving.hiveNumber}", "📍 Натисніть на карту для: ${moving.hiveNumber}", "📍 Коснитесь карты для: ${moving.hiveNumber}", "📍 Докоснете картата за: ${moving.hiveNumber}", "📍 Toque no mapa para: ${moving.hiveNumber}", "📍 Tocca sulla mappa per: ${moving.hiveNumber}", "📍 Toca en el mapa para: ${moving.hiveNumber}"))
                         TextButton(onClick = { elementToMove = null }) {
-                            Text("Anulează")
+                            Text(AppLocalization.get(selectedLanguage, "Anulează", "Cancel", "Annuler", "Mégse", "Abbrechen", "Скасувати", "Отмена", "Отказ", "Cancelar", "Annulla", "Cancelar"))
                         }
                     }
                 }
@@ -547,7 +553,7 @@ fun MapScreenWithDrawer(
                             )
                             Column {
                                 Text(
-                                    text = if (selectedLanguage == "English") "Current GPS Coordinates" else "Coordonate GPS Curente",
+                                    text = AppLocalization.get(selectedLanguage, "Coordonate GPS Curente", "Current GPS Coordinates", "Coordonnées GPS Actuelles", "Jelenlegi GPS Koordináták", "Aktuelle GPS-Koordinaten", "Поточні координати GPS", "Текущие координаты GPS", "Текущи GPS координати", "Coordenadas GPS Atuais", "Coordinate GPS Attuali", "Coordenadas GPS Actuales"),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -575,7 +581,7 @@ fun MapScreenWithDrawer(
                             contentDescription = null,
                             modifier = Modifier.padding(end = 8.dp)
                         )
-                        Text(if (selectedLanguage == "English") "Add Hive or Apiary at GPS Location" else "Adaugă Stup / Stupină la Locația Curentă")
+                        Text(AppLocalization.get(selectedLanguage, "Adaugă Stup / Stupină la Locația Curentă", "Add Hive or Apiary at GPS Location", "Ajouter une Ruche / Rucher à la position GPS", "Kaptár / Méhészet Hozzáadása a GPS Helyzetnél", "Bienenstock / Imkerei an GPS-Position Hinzufügen", "Додати вулик / пасіку за GPS", "Добавить улей / пасеку по GPS", "Добавяне на кошер / пчелин по GPS", "Adicionar Colmeia / Apiário na Posição GPS", "Aggiungi Arnia / Apiario a Posizione GPS", "Añadir Colmena / Colmenar en Posición GPS"))
                     }
                 }
             }
@@ -691,16 +697,19 @@ fun AddElementAtCoordsDialog(
     onDismiss: () -> Unit,
     onSaveHive: (Beehive) -> Unit
 ) {
-    val isEnglish = (selectedLanguage == "English")
+    val defaultNotes = AppLocalization.get(selectedLanguage, "Marcat la coordonatele GPS", "Added at GPS coordinates", "Marqué aux coordonnées GPS", "GPS koordinátáknál megjelölve", "Markiert an GPS-Koordinaten", "Позначено за GPS", "Отмечено по GPS", "Маркирано по GPS", "Marcado nas coordenadas GPS", "Contrassegnato a coordinate GPS", "Marcado en coordenadas GPS")
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var nameText by remember { mutableStateOf("") }
-    var notesText by remember { mutableStateOf(if (isEnglish) "Added at GPS coordinates" else "Marcat la coordonatele GPS") }
+    var notesText by remember { mutableStateOf(defaultNotes) }
     var selectedStatus by remember { mutableStateOf(HiveStatus.STRONG) }
     var expandedStatus by remember { mutableStateOf(false) }
 
+    val addHiveTitle = AppLocalization.get(selectedLanguage, "🐝 Adaugă Stup Individual", "🐝 Add Individual Hive", "🐝 Ajouter Ruche Individuelle", "🐝 Egyedi Kaptár Hozzáadása", "🐝 Einzelnen Bienenstock Hinzufügen", "🐝 Додати окремий вулик", "🐝 Добавить отдельный улей", "🐝 Добавяне на отделен кошер", "🐝 Adicionar Colmeia Individual", "🐝 Aggiungi Arnia Individuale", "🐝 Añadir Colmena Individual")
+    val addApiaryTitle = AppLocalization.get(selectedLanguage, "🏠 Adaugă Stupină Complexă", "🏠 Add Apiary Complex", "🏠 Ajouter Rucher Complexe", "🏠 Komplex Méhészet Hozzáadása", "🏠 Imkerei-Komplex Hinzufügen", "🏠 Додати комплексну пасіку", "🏠 Добавить комплексную пасеку", "🏠 Добавяне на комплексен пчелин", "🏠 Adicionar Complexo de Apiário", "🏠 Aggiungi Complesso Apiario", "🏠 Añadir Complejo Colmenar")
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (selectedTabIndex == 0) (if (isEnglish) "🐝 Add Individual Hive" else "🐝 Adaugă Stup Individual") else (if (isEnglish) "🏠 Add Apiary Complex" else "🏠 Adaugă Stupină Complexă")) },
+        title = { Text(if (selectedTabIndex == 0) addHiveTitle else addApiaryTitle) },
         text = {
             Column(
                 modifier = Modifier
@@ -712,12 +721,12 @@ fun AddElementAtCoordsDialog(
                     Tab(
                         selected = selectedTabIndex == 0,
                         onClick = { selectedTabIndex = 0 },
-                        text = { Text(if (isEnglish) "Hive 🐝" else "Stup 🐝") }
+                        text = { Text(AppLocalization.get(selectedLanguage, "Stup 🐝", "Hive 🐝", "Ruche 🐝", "Kaptár 🐝", "Bienenstock 🐝", "Вулик 🐝", "Улей 🐝", "Кошер 🐝", "Colmeia 🐝", "Arnia 🐝", "Colmena 🐝")) }
                     )
                     Tab(
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 },
-                        text = { Text(if (isEnglish) "Apiary 🏠" else "Stupină 🏠") }
+                        text = { Text(AppLocalization.get(selectedLanguage, "Stupină 🏠", "Apiary 🏠", "Rucher 🏠", "Méhészet 🏠", "Imkerei 🏠", "Пасіка 🏠", "Пасека 🏠", "Пчелин 🏠", "Apiário 🏠", "Apiario 🏠", "Colmenar 🏠")) }
                     )
                 }
 
@@ -730,7 +739,7 @@ fun AddElementAtCoordsDialog(
                 OutlinedTextField(
                     value = nameText,
                     onValueChange = { nameText = it },
-                    label = { Text(if (selectedTabIndex == 0) (if (isEnglish) "Hive Number/Name" else "Număr/Nume Stup") else (if (isEnglish) "Apiary Name" else "Nume Stupină")) },
+                    label = { Text(if (selectedTabIndex == 0) AppLocalization.get(selectedLanguage, "Număr/Nume Stup", "Hive Number/Name", "Numéro/Nom de la Ruche", "Kaptár Száma/Neve", "Bienenstock-Nummer/Name", "Номер/Назва вулика", "Номер/Название улья", "Номер/Име на кошер", "Número/Nome da Colmeia", "Numero/Nome Arnia", "Número/Nombre Colmena") else AppLocalization.get(selectedLanguage, "Nume Stupină", "Apiary Name", "Nom du Rucher", "Méhészet Neve", "Imkerei-Name", "Назва пасіки", "Название пасеки", "Име на пчелин", "Nome do Apiário", "Nome Apiario", "Nombre Colmenar")) },
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -743,7 +752,7 @@ fun AddElementAtCoordsDialog(
                             value = selectedStatus.toDisplayName(selectedLanguage),
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text(if (isEnglish) "Hive Status" else "Stare Stup (Status)") },
+                            label = { Text(AppLocalization.get(selectedLanguage, "Stare Stup (Status)", "Hive Status", "Statut de la Ruche", "Kaptár Állapota", "Bienenstock-Status", "Стан вулика", "Состояние улья", "Състояние на кошер", "Status da Colmeia", "Stato dell'Arnia", "Estado de la Colmena")) },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedStatus) },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -769,7 +778,7 @@ fun AddElementAtCoordsDialog(
                 OutlinedTextField(
                     value = notesText,
                     onValueChange = { notesText = it },
-                    label = { Text(if (isEnglish) "Field Notes" else "Note / Descriere Teren") },
+                    label = { Text(AppLocalization.get(selectedLanguage, "Note / Descriere Teren", "Field Notes", "Notes de Terrain", "Terepi Megjegyzések", "Feldnotizen", "Польові нотатки", "Полевые заметки", "Полеви бележки", "Notas de Campo", "Note di Campo", "Notas de Campo")) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -791,12 +800,12 @@ fun AddElementAtCoordsDialog(
                     }
                 }
             ) {
-                Text(if (selectedTabIndex == 1) (if (isEnglish) "Add Apiary 🏠" else "Adaugă Stupină 🏠") else (if (isEnglish) "Add Hive 🐝" else "Adaugă Stup 🐝"))
+                Text(if (selectedTabIndex == 1) AppLocalization.get(selectedLanguage, "Adaugă Stupină 🏠", "Add Apiary 🏠", "Ajouter Rucher 🏠", "Méhészet Hozzáadása 🏠", "Imkerei Hinzufügen 🏠", "Додати пасіку 🏠", "Добавить пасеку 🏠", "Добавяне на пчелин 🏠", "Adicionar Apiário 🏠", "Aggiungi Apiario 🏠", "Añadir Colmenar 🏠") else AppLocalization.get(selectedLanguage, "Adaugă Stup 🐝", "Add Hive 🐝", "Ajouter Ruche 🐝", "Kaptár Hozzáadása 🐝", "Bienenstock Hinzufügen 🐝", "Додати вулик 🐝", "Добавить улей 🐝", "Добавяне на кошер 🐝", "Adicionar Colmeia 🐝", "Aggiungi Arnia 🐝", "Añadir Colmena 🐝"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(if (isEnglish) "Cancel" else "Anulează")
+                Text(AppLocalization.get(selectedLanguage, "Anulează", "Cancel", "Annuler", "Mégse", "Abbrechen", "Скасувати", "Отмена", "Отказ", "Cancelar", "Annulla", "Cancelar"))
             }
         }
     )

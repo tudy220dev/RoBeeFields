@@ -53,6 +53,7 @@ import com.example.hivepoint.model.ChangelogCategory
 import com.example.hivepoint.model.ChangelogEntry
 import com.example.hivepoint.model.ChangelogRepository
 import com.example.hivepoint.model.ChangelogSection
+import com.example.hivepoint.util.AppLocalization
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,7 +62,6 @@ fun AboutScreen(
     onOpenDrawer: () -> Unit
 ) {
     var selectedCategory by remember { mutableStateOf(ChangelogCategory.ALL) }
-    val isEnglish = selectedLanguage == "English"
 
     val filteredEntries = remember(selectedCategory) {
         if (selectedCategory == ChangelogCategory.ALL) {
@@ -75,13 +75,13 @@ fun AboutScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(if (isEnglish) "About RoBee Fields" else "Despre RoBee Fields")
+                    Text(AppLocalization.get(selectedLanguage, "Despre RoBee Fields", "About RoBee Fields", "À propos de RoBee Fields", "A RoBee Fieldsről", "Über RoBee Fields", "Про RoBee Fields", "О RoBee Fields", "За RoBee Fields", "Sobre o RoBee Fields", "Info su RoBee Fields", "Acerca de RoBee Fields"))
                 },
                 navigationIcon = {
                     IconButton(onClick = onOpenDrawer) {
                         Icon(
                             imageVector = Icons.Default.Menu,
-                            contentDescription = if (isEnglish) "Menu" else "Meniu"
+                            contentDescription = AppLocalization.get(selectedLanguage, "Meniu", "Menu", "Menu", "Menü", "Menü", "Меню", "Меню", "Меню", "Menu", "Menu", "Menú")
                         )
                     }
                 }
@@ -125,10 +125,7 @@ fun AboutScreen(
                                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                                 )
                                 Text(
-                                    text = if (isEnglish)
-                                        "Navigation System, Offline-First & Decentralized"
-                                    else
-                                        "Sistem De navigare, Offline-First și Descentralizat",
+                                    text = AppLocalization.get(selectedLanguage, "Sistem De navigare, Offline-First și Descentralizat", "Navigation System, Offline-First & Decentralized", "Système de Navigation, Offline-First & Décentralisé", "Navigációs Rendszer, Offline-Első & Detszentralizált", "Navigationssystem, Offline-First & Dezentralisiert", "Навігаційна система, Офлайн-перша та децентралізована", "Навигационная система, Офлайн-первая и децентрализованная", "Навигационна система, Офлайн-първа и децентрализирана", "Sistema de Navegação, Offline-First e Descentralizado", "Sistema di Navigazione, Offline-First e Decentrato", "Sistema de Navegación, Offline-First y Descentralizado"),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary
                                 )
@@ -138,18 +135,12 @@ fun AboutScreen(
                         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
 
                         Text(
-                            text = if (isEnglish)
-                                "Developed by Radu Tudor-Andrei and Icătoiu Ștefan (2nd Year Robotics Students) for beekeepers and field operations without internet connection."
-                            else
-                                "Dezvoltat de Radu Tudor-Andrei și Icătoiu Ștefan (Studenți Robotică Anul 2) pentru apicultori și intervenții pe teren fără conexiune la internet.",
+                            text = AppLocalization.get(selectedLanguage, "Dezvoltat de Radu Tudor-Andrei și Icătoiu Ștefan (Studenți Robotică Anul 2) pentru apicultori și intervenții pe teren fără conexiune la internet.", "Developed by Radu Tudor-Andrei and Icătoiu Ștefan (2nd Year Robotics Students) for beekeepers and field operations without internet connection.", "Développé par Radu Tudor-Andrei et Icătoiu Ștefan pour les apiculteurs sans connexion internet.", "Fejlesztette Radu Tudor-Andrei és Icătoiu Ștefan méhészek számára internetkapcsolat nélkül.", "Entwickelt von Radu Tudor-Andrei und Icătoiu Ștefan für Imker ohne Internetverbindung.", "Розроблено Раду Тудор-Андреєм та Ікетою Штефаном для пасічників без інтернету.", "Разработано Раду Тудор-Андреем и Икэтою Штефаном для пчеловодов без интернета.", "Разработено от Раду Тудор-Андрей и Икътою Щефан за пчелари без интернет.", "Desenvolvido por Radu Tudor-Andrei e Icătoiu Ștefan para apicultores sem internet.", "Sviluppato da Radu Tudor-Andrei e Icătoiu Ștefan per apicoltori senza connessione internet.", "Desarrollado por Radu Tudor-Andrei e Icătoiu Ștefan para apicultores sin internet."),
                             style = MaterialTheme.typography.bodyMedium
                         )
 
                         Text(
-                            text = if (isEnglish)
-                                "Principles: Zero central servers • Pure local storage • Compact P2P SMS/mesh transfer."
-                            else
-                                "Principii: Zero servere centrale • Stocare locală pură • Transfer P2P SMS/mesh compact.",
+                            text = AppLocalization.get(selectedLanguage, "Principii: Zero servere centrale • Stocare locală pură • Transfer P2P SMS/mesh compact.", "Principles: Zero central servers • Pure local storage • Compact P2P SMS/mesh transfer.", "Principes : Zéro serveur central • Stockage local pur • Transfert P2P SMS compact.", "Elvek: Zéró központi szerver • Tiszta helyi tárolás • Kompakt P2P SMS átvitel.", "Prinzipien: Keine zentralen Server • Reine lokale Speicherung • Kompakter P2P-SMS-Transfer.", "Принципи: Нуль центральних серверів • Локальне збереження • P2P SMS трансфер.", "Принципы: Ноль центральных серверов • Локальное хранение • P2P SMS трансфер.", "Принципи: Нула централни сървъри • Чисто локално съхранение • P2P SMS трансфер.", "Princípios: Zero servidores centrais • Armazenamento local puro • Transferência P2P SMS.", "Principi: Zero server centrali • Archiviazione locale pura • Trasferimento P2P SMS.", "Principios: Cero servidores centrales • Almacenamiento local puro • Transferencia P2P SMS."),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -173,10 +164,7 @@ fun AboutScreen(
                                 style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold)
                             )
                             Text(
-                                text = if (isEnglish)
-                                    "RoBee Fields Update History"
-                                else
-                                    "Istoricul actualizărilor RoBee Fields",
+                                text = AppLocalization.get(selectedLanguage, "Istoricul actualizărilor RoBee Fields", "RoBee Fields Update History", "Historique des mises à jour", "Frissítési előzmények", "Update-Verlauf", "Історія оновлень", "История обновлений", "История на актуализациите", "Histórico de atualizações", "Cronologia aggiornamenti", "Historial de actualizaciones"),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -199,7 +187,7 @@ fun AboutScreen(
                                     .clickable { selectedCategory = category }
                             ) {
                                 Text(
-                                    text = category.label,
+                                    text = category.toDisplayName(selectedLanguage),
                                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                     style = MaterialTheme.typography.labelMedium.copy(
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal

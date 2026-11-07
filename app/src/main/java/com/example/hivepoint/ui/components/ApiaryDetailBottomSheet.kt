@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
+import com.example.hivepoint.util.AppLocalization
 import com.example.hivepoint.util.HiveSerializer
 import java.util.Locale
 
@@ -67,7 +68,6 @@ fun ApiaryDetailBottomSheet(
     onStartMapPickMode: () -> Unit
 ) {
     val context = LocalContext.current
-    val isEn = selectedLanguage == "English"
     var currentApiaryTitle by remember { mutableStateOf(apiaryName.removePrefix("🏠").trim()) }
     var showAddHiveDialog by remember { mutableStateOf(false) }
     var showEditApiaryDialog by remember { mutableStateOf(false) }
@@ -78,6 +78,9 @@ fun ApiaryDetailBottomSheet(
     }
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    val apiaryPrefix = AppLocalization.get(selectedLanguage, "Stupină", "Apiary", "Rucher", "Méhészet", "Imkerei", "Пасіка", "Пасека", "Пчелин", "Apiário", "Apiario", "Colmenar")
+    val hivesCountLabel = AppLocalization.get(selectedLanguage, "Stupi în stupină", "Hives count", "Nombre de ruches", "Kaptárak száma", "Anzahl Bienenstöcke", "Кількість вуликів", "Количество ульев", "Брой кошери", "Quantidade de colmeias", "Numero arnie", "Número de colmenas")
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -95,13 +98,13 @@ fun ApiaryDetailBottomSheet(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = if (isEn) "🏠 Apiary: $currentApiaryTitle" else "🏠 Stupină: $currentApiaryTitle",
+                    text = "🏠 $apiaryPrefix: $currentApiaryTitle",
                     style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
                     text = String.format(
-                        if (isEn) Locale.US else Locale("ro", "RO"),
-                        if (isEn) "GPS: %.5f, %.5f | Hives count: %d" else "GPS: %.5f, %.5f | Stupi în stupină: %d",
+                        if (selectedLanguage == "English") Locale.US else Locale("ro", "RO"),
+                        "GPS: %.5f, %.5f | $hivesCountLabel: %d",
                         apiaryLatitude,
                         apiaryLongitude,
                         individualHives.size
@@ -125,7 +128,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.Add, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                    Text(if (isEn) "Add Hive" else "Adaugă Stup", style = MaterialTheme.typography.labelMedium)
+                    Text(AppLocalization.get(selectedLanguage, "Adaugă Stup", "Add Hive", "Ajouter Ruche", "Kaptár Hozzáadása", "Stock Hinzufügen", "Додати вулик", "Добавить улей", "Добавяне на кошер", "Adicionar Colmeia", "Aggiungi Arnia", "Añadir Colmena"), style = MaterialTheme.typography.labelMedium)
                 }
 
                 OutlinedButton(
@@ -135,13 +138,13 @@ fun ApiaryDetailBottomSheet(
                         try {
                             context.startActivity(intent)
                         } catch (_: Exception) {
-                            Toast.makeText(context, if (isEn) "No browser found" else "Niciun browser găsit", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, AppLocalization.get(selectedLanguage, "Niciun browser găsit", "No browser found", "Aucun navigateur trouvé", "Böngésző nem található", "Kein Browser gefunden", "Браузер не знайдено", "Браузер не найден", "Не е намерен браузър", "Nenhum navegador encontrado", "Nessun browser trovato", "Navegador no encontrado"), Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.WbCloudy, contentDescription = null, modifier = Modifier.padding(end = 4.dp), tint = MaterialTheme.colorScheme.primary)
-                    Text(if (isEn) "Weather (Ventusky)" else "Vreme (Ventusky 🌤️)", style = MaterialTheme.typography.labelMedium)
+                    Text(AppLocalization.get(selectedLanguage, "Vreme (Ventusky 🌤️)", "Weather (Ventusky)", "Météo (Ventusky 🌤️)", "Időjárás (Ventusky 🌤️)", "Wetter (Ventusky 🌤️)", "Погода (Ventusky 🌤️)", "Погода (Ventusky 🌤️)", "Време (Ventusky 🌤️)", "Tempo (Ventusky 🌤️)", "Meteo (Ventusky 🌤️)", "Tiempo (Ventusky 🌤️)"), style = MaterialTheme.typography.labelMedium)
                 }
             }
 
@@ -157,7 +160,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                    Text(if (isEn) "Move" else "Mută GPS", style = MaterialTheme.typography.labelSmall)
+                    Text(AppLocalization.get(selectedLanguage, "Mută GPS", "Move", "Déplacer", "Áthelyezés", "Verschieben", "Перемістити", "Переместить", "Преместване", "Mover", "Sposta", "Mover"), style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -165,7 +168,7 @@ fun ApiaryDetailBottomSheet(
                     modifier = Modifier.weight(1f)
                 ) {
                     Icon(imageVector = Icons.Default.Edit, contentDescription = null, modifier = Modifier.padding(end = 4.dp))
-                    Text(if (isEn) "Edit Name" else "Editează", style = MaterialTheme.typography.labelSmall)
+                    Text(AppLocalization.get(selectedLanguage, "Editează", "Edit Name", "Modifier", "Szerkesztés", "Bearbeiten", "Редагувати", "Редактировать", "Редактиране", "Editar", "Modifica", "Editar"), style = MaterialTheme.typography.labelSmall)
                 }
 
                 OutlinedButton(
@@ -175,8 +178,8 @@ fun ApiaryDetailBottomSheet(
                             type = "text/plain"
                             putExtra(Intent.EXTRA_TEXT, payload)
                         }
-                        context.startActivity(Intent.createChooser(shareIntent, if (isEn) "Share Apiary P2P" else "Trimite Stupină P2P"))
-                        Toast.makeText(context, if (isEn) "Apiary P2P data generated!" else "Telemetrie Stupină P2P generată!", Toast.LENGTH_SHORT).show()
+                        context.startActivity(Intent.createChooser(shareIntent, AppLocalization.get(selectedLanguage, "Trimite Stupină P2P", "Share Apiary P2P", "Partager Rucher P2P", "Méhészet Megosztása P2P", "Imkerei Teilen P2P", "Поділитися пасікою P2P", "Поделиться пасекой P2P", "Споделяне на пчелин P2P", "Compartilhar Apiário P2P", "Condividi Apiario P2P", "Compartir Colmenar P2P")))
+                        Toast.makeText(context, AppLocalization.get(selectedLanguage, "Telemetrie Stupină P2P generată!", "Apiary P2P data generated!", "Données P2P générées!", "P2P adatok generálva!", "P2P-Daten generiert!", "Телеметрію P2P згенеровано!", "Телеметрия P2P сгенерирована!", "P2P данни са генерирани!", "Dados P2P gerados!", "Dati P2P generati!", "¡Datos P2P generados!"), Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.weight(1f)
                 ) {
@@ -188,7 +191,7 @@ fun ApiaryDetailBottomSheet(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(
-                text = if (isEn) "Hives in this Apiary:" else "Lista Stupilor din această Stupină:",
+                text = AppLocalization.get(selectedLanguage, "Lista Stupilor din această Stupină:", "Hives in this Apiary:", "Ruches dans ce Rucher :", "A méhészet kaptárai:", "Bienenstöcke in dieser Imkerei:", "Вулики в цій пасіці:", "Ульи в этой пасеке:", "Кошери в този пчелин:", "Colmeias neste Apiário:", "Arnie in questo Apiario:", "Colmenas en este Colmenar:"),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
@@ -216,7 +219,7 @@ fun ApiaryDetailBottomSheet(
                                 },
                                 trailingContent = {
                                     Button(onClick = { onSelectHive(hive) }) {
-                                        Text(if (isEn) "Options" else "Opțiuni")
+                                        Text(AppLocalization.get(selectedLanguage, "Opțiuni", "Options", "Options", "Opciók", "Optionen", "Опції", "Опции", "Опции", "Opções", "Opzioni", "Opciones"))
                                     }
                                 }
                             )
@@ -231,7 +234,7 @@ fun ApiaryDetailBottomSheet(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                 ) {
                     Text(
-                        text = if (isEn) "No hives added yet in this apiary. Click 'Add Hive' above to register the first hive!" else "Niciun stup adăugat încă în această stupină. Apasă pe 'Adaugă Stup' mai sus pentru a înregistra primul stup!",
+                        text = AppLocalization.get(selectedLanguage, "Niciun stup adăugat încă în această stupină. Apasă pe 'Adaugă Stup' mai sus pentru a înregistra primul stup!", "No hives added yet in this apiary. Click 'Add Hive' above to register the first hive!", "Aucune ruche ajoutée. Cliquez sur 'Ajouter Ruche' pour commencer !", "Még nincs kaptár. Kattintson a 'Kaptár Hozzáadása' gombra!", "Noch keine Bienenstöcke hinzugefügt. Klicken Sie oben auf 'Stock Hinzufügen'!", "Ще немає вуликів. Натисніть 'Додати вулик' вище!", "Еще нет ульев. Нажмите 'Добавить улей' выше!", "Все още няма добавени кошери. Натиснете 'Добавяне на кошер'!", "Nenhuma colmeia adicionada ainda. Clique em 'Adicionar Colmeia'!", "Nessuna arnia ancora aggiunta. Clicca 'Aggiungi Arnia'!", "¡Sin colmenas aún. Haz clic en 'Añadir Colmena' arriba!"),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -253,14 +256,14 @@ fun ApiaryDetailBottomSheet(
                     tint = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(end = 6.dp)
                 )
-                Text(if (isEn) "Delete Entire Apiary and Hives" else "Șterge Toată Stupina și Stupii", color = MaterialTheme.colorScheme.error)
+                Text(AppLocalization.get(selectedLanguage, "Șterge Toată Stupina și Stupii", "Delete Entire Apiary and Hives", "Supprimer Tout le Rucher", "Minden Kaptár és Méhészet Törlése", "Gesamte Imkerei Löschen", "Видалити всю пасіку та вулики", "Удалить всю пасеку и ульи", "Изтриване на целия пчелин", "Excluir Apiário Inteiro e Colmeias", "Elimina Intero Apiario e Arnie", "Eliminar Colmenar Entero y Colmenas"), color = MaterialTheme.colorScheme.error)
             }
         }
     }
 
     if (showMoveDialog) {
         MoveLocationDialog(
-            elementName = if (isEn) "Apiary $currentApiaryTitle" else "Stupină $currentApiaryTitle",
+            elementName = "$apiaryPrefix $currentApiaryTitle",
             currentLat = apiaryLatitude,
             currentLon = apiaryLongitude,
             appCurrentLat = appCurrentLat,
@@ -316,12 +319,11 @@ fun EditApiaryDialog(
     onDismiss: () -> Unit,
     onSave: (String) -> Unit
 ) {
-    val isEn = selectedLanguage == "English"
     var name by remember { mutableStateOf(currentName) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEn) "Edit Apiary" else "Editează Stupină") },
+        title = { Text(AppLocalization.get(selectedLanguage, "Editează Stupină", "Edit Apiary", "Modifier le Rucher", "Méhészet Szerkesztése", "Imkerei Bearbeiten", "Редагувати пасіку", "Редактировать пасеку", "Редактиране на пчелин", "Editar Apiário", "Modifica Apiario", "Editar Colmenar")) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -330,7 +332,7 @@ fun EditApiaryDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text(if (isEn) "NEW Apiary Name" else "Nume NOU Stupină") },
+                    label = { Text(AppLocalization.get(selectedLanguage, "Nume NOU Stupină", "NEW Apiary Name", "Nouveau Nom du Rucher", "Új Méhészet Neve", "Neuer Imkerei-Name", "Нова назва пасіки", "Новое название пасеки", "Ново име на пчелин", "Novo Nome do Apiário", "Nuovo Nome Apiario", "Nuevo Nombre Colmenar")) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -343,12 +345,12 @@ fun EditApiaryDialog(
                     }
                 }
             ) {
-                Text(if (isEn) "Save" else "Salvează")
+                Text(AppLocalization.get(selectedLanguage, "Salvează", "Save", "Enregistrer", "Mentés", "Speichern", "Зберегти", "Сохранить", "Запазване", "Salvar", "Salva", "Guardar"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(if (isEn) "Cancel" else "Anulează")
+                Text(AppLocalization.get(selectedLanguage, "Anulează", "Cancel", "Annuler", "Mégse", "Abbrechen", "Скасувати", "Отмена", "Отказ", "Cancelar", "Annulla", "Cancelar"))
             }
         }
     )
@@ -364,13 +366,14 @@ fun AddHiveToApiaryDialog(
     onDismiss: () -> Unit,
     onSaveHive: (Beehive) -> Unit
 ) {
-    val isEn = selectedLanguage == "English"
     var hiveNumber by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
 
+    val dialogTitle = AppLocalization.get(selectedLanguage, "🐝 Adaugă Stup în $apiaryName", "🐝 Add Hive in $apiaryName", "🐝 Ajouter Ruche dans $apiaryName", "🐝 Kaptár Hozzáadása itt: $apiaryName", "🐝 Stock Hinzufügen in $apiaryName", "🐝 Додати вулик у $apiaryName", "🐝 Добавить улей в $apiaryName", "🐝 Добавяне на кошер в $apiaryName", "🐝 Adicionar Colmeia em $apiaryName", "🐝 Aggiungi Arnia in $apiaryName", "🐝 Añadir Colmena en $apiaryName")
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isEn) "🐝 Add Hive in $apiaryName" else "🐝 Adaugă Stup în $apiaryName") },
+        title = { Text(dialogTitle) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -379,13 +382,13 @@ fun AddHiveToApiaryDialog(
                 OutlinedTextField(
                     value = hiveNumber,
                     onValueChange = { hiveNumber = it },
-                    label = { Text(if (isEn) "Hive Number (e.g. Hive #1)" else "Număr Stup (ex. Stup #1)") },
+                    label = { Text(AppLocalization.get(selectedLanguage, "Număr Stup (ex. Stup #1)", "Hive Number (e.g. Hive #1)", "Numéro de Ruche (ex. Ruche #1)", "Kaptár Száma (pl. Kaptár #1)", "Stock-Nummer (z.B. Stock #1)", "Номер вулика (напр. Вулик #1)", "Номер улья (напр. Улей #1)", "Номер на кошер (напр. Кошер #1)", "Número da Colmeia (ex. Colmeia #1)", "Numero Arnia (es. Arnia #1)", "Número de Colmena (ej. Colmena #1)")) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text(if (isEn) "Notes / Colony Status" else "Note / Stare Familie") },
+                    label = { Text(AppLocalization.get(selectedLanguage, "Note / Stare Familie", "Notes / Colony Status", "Notes / Statut Colonie", "Megjegyzések / Család Állapota", "Notizen / Volkszustand", "Примітки / Стан сім'ї", "Заметки / Состояние семьи", "Бележки / Състояние", "Notas / Status da Colônia", "Note / Stato Famiglia", "Notas / Estado de Colonia")) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -406,12 +409,12 @@ fun AddHiveToApiaryDialog(
                     }
                 }
             ) {
-                Text(if (isEn) "Add to Apiary" else "Adaugă în Stupină")
+                Text(AppLocalization.get(selectedLanguage, "Adaugă în Stupină", "Add to Apiary", "Ajouter au Rucher", "Hozzáadás a Méhészethez", "Zur Imkerei Hinzufügen", "Додати до пасіки", "Добавить в пасеку", "Добавяне към пчелина", "Adicionar ao Apiário", "Aggiungi all'Apiario", "Añadir al Colmenar"))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text(if (isEn) "Cancel" else "Anulează")
+                Text(AppLocalization.get(selectedLanguage, "Anulează", "Cancel", "Annuler", "Mégse", "Abbrechen", "Скасувати", "Отмена", "Отказ", "Cancelar", "Annulla", "Cancelar"))
             }
         }
     )

@@ -7,7 +7,24 @@ enum class ChangelogCategory(val label: String) {
     FIELD("Field"),
     SYNC("Sync"),
     MAPS("Maps"),
-    CORE("Core")
+    CORE("Core");
+
+    fun toDisplayName(lang: String): String {
+        return AppLocalization.get(
+            lang,
+            ro = when (this) { ALL -> "Toate"; FIELD -> "Teren"; SYNC -> "Sincronizare"; MAPS -> "Hărți"; CORE -> "Nucleu" },
+            en = when (this) { ALL -> "All"; FIELD -> "Field"; SYNC -> "Sync"; MAPS -> "Maps"; CORE -> "Core" },
+            fr = when (this) { ALL -> "Tous"; FIELD -> "Terrain"; SYNC -> "Synchro"; MAPS -> "Cartes"; CORE -> "Noyau" },
+            hu = when (this) { ALL -> "Összes"; FIELD -> "Terep"; SYNC -> "Szinkron"; MAPS -> "Térképek"; CORE -> "Mag" },
+            de = when (this) { ALL -> "Alle"; FIELD -> "Feld"; SYNC -> "Synchro"; MAPS -> "Karten"; CORE -> "Kern" },
+            uk = when (this) { ALL -> "Всі"; FIELD -> "Поле"; SYNC -> "Синхронізація"; MAPS -> "Карти"; CORE -> "Ядро" },
+            ru = when (this) { ALL -> "Все"; FIELD -> "Поле"; SYNC -> "Синхронизация"; MAPS -> "Карты"; CORE -> "Ядро" },
+            bg = when (this) { ALL -> "Всички"; FIELD -> "Поле"; SYNC -> "Синхронизация"; MAPS -> "Карти"; CORE -> "Ядро" },
+            pt = when (this) { ALL -> "Todos"; FIELD -> "Campo"; SYNC -> "Sincronização"; MAPS -> "Mapas"; CORE -> "Núcleo" },
+            it = when (this) { ALL -> "Tutti"; FIELD -> "Campo"; SYNC -> "Sincronizzazione"; MAPS -> "Mappe"; CORE -> "Nucleo" },
+            es = when (this) { ALL -> "Todos"; FIELD -> "Campo"; SYNC -> "Sincronización"; MAPS -> "Mapas"; CORE -> "Núcleo" },
+        )
+    }
 }
 
 data class ChangelogSection(
@@ -104,6 +121,108 @@ data class ChangelogEntry(
 
 object ChangelogRepository {
     val entries = listOf(
+        ChangelogEntry(
+            version = "v0.6.1",
+            dateRo = "07 Noi 2026",
+            dateEn = "07 Nov 2026",
+            titleRo = "RoBee Fields 0.6.1 (Sincronizare Multilingvă 100% în Toate Meniurile)",
+            titleEn = "RoBee Fields 0.6.1 (100% Full Multilingual Sync Across All Menus)",
+            titleFr = "RoBee Fields 0.6.1 (Synchronisation Multilingue 100% sur Tous les Menus)",
+            titleHu = "RoBee Fields 0.6.1 (100% Teljes Multilingvális Szinkronizáció Minden Menüben)",
+            titleDe = "RoBee Fields 0.6.1 (100% Vollständige Mehrsprachige Synchronisierung in Allen Menüs)",
+            titleUk = "RoBee Fields 0.6.1 (100% Мультимовна синхронізація в усіх меню)",
+            titleRu = "RoBee Fields 0.6.1 (100% Мультиязычная синхронизация во всех меню)",
+            titleBg = "RoBee Fields 0.6.1 (100% Мултиезична синхронизация във всички менюта)",
+            titlePt = "RoBee Fields 0.6.1 (Sincronização Multilíngue 100% em Todos os Menus)",
+            titleIt = "RoBee Fields 0.6.1 (Sincronizzazione Multilingue 100% in Tutti i Menu)",
+            titleEs = "RoBee Fields 0.6.1 (Sincronización Multilingüe 100% en Todos los Menús)",
+            tagRo = "Nucleu",
+            tagEn = "Core",
+            tagFr = "Noyau",
+            tagHu = "Mag",
+            tagDe = "Kern",
+            tagUk = "Ядро",
+            tagRu = "Ядро",
+            tagBg = "Ядро",
+            tagPt = "Núcleo",
+            tagIt = "Nucleo",
+            tagEs = "Núcleo",
+            category = ChangelogCategory.CORE,
+            descriptionRo = "Versiunea 0.6.1 aduce integrarea multilingvă completă (100%) în toate meniurile aplicației: Meniul Lateral, Harta Principală, Formularul Adaugă Stup/Stupină, Setări, Despre, Meniul Stupilor și Meniul Stupinelor.",
+            descriptionEn = "Version 0.6.1 brings 100% complete multilingual integration across all app menus: Navigation Drawer, Main Map, Add Hive/Apiary Form, Settings, About, Hive Action Menu, and Apiary Complex Menu.",
+            descriptionFr = "La version 0.6.1 introduit l'intégration multilingue complète à 100 % sur tous les menus de l'application.",
+            descriptionHu = "A 0.6.1-es verzió 100%-os teljes multilingvális integrációt vezet be az alkalmazás minden menüjében.",
+            descriptionDe = "Version 0.6.1 führt eine 100% vollständige mehrsprachige Integration in allen App-Menüs ein.",
+            descriptionUk = "Версія 0.6.1 запроваджує 100% повну мультимовну інтеграцію в усіх меню програми.",
+            descriptionRu = "Версия 0.6.1 внедряет 100% полную мультиязычную интеграцию во всех меню приложения.",
+            descriptionBg = "Версия 0.6.1 въвежда 100% пълна мултиезична интеграция във всички менюта на приложението.",
+            descriptionPt = "A versão 0.6.1 introduz integração multilíngue 100% completa em todos os menus do aplicativo.",
+            descriptionIt = "La versione 0.6.1 introduce l'integrazione multilingue completa al 100% in tutti i menu dell'app.",
+            descriptionEs = "La versión 0.6.1 introduce una integración multilingüe 100% completa en todos los menús de la aplicación.",
+            sections = listOf(
+                ChangelogSection(
+                    titleRo = "Nou",
+                    titleEn = "New",
+                    titleFr = "Nouveau",
+                    titleHu = "Új",
+                    titleDe = "Neu",
+                    titleUk = "Нове",
+                    titleRu = "Новое",
+                    titleBg = "Ново",
+                    titlePt = "Novo",
+                    titleIt = "Nuovo",
+                    titleEs = "Nuevo",
+                    itemsRo = listOf(
+                        "Schimbarea dinamică a limbii afectează acum Meniul Lateral (Harta Principală, Adaugă Stup, Setări, Despre).",
+                        "Tratarea bilingvă și multilingvă integrală a Hărții Principale (titluri marcaje stupi/stupine, pin locație live GPS, instrumente de zoom și adăugare).",
+                        "Localizarea completă a Meniului Stupilor (Meteo Ventusky, Galerie Foto, Jurnale de Inspecție, Mutare GPS, Detalii, Trimite Hash P2P).",
+                        "Localizarea completă a Meniului Stupinelor (Adăugare Stup în Stupină, Mutare GPS, Editează Nume, P2P SMS Share)."
+                    ),
+                    itemsEn = listOf(
+                        "Dynamic language switching now affects the Navigation Drawer (Main Map, Add Hive, Settings, About).",
+                        "Comprehensive multilingual handling for the Main Map (hive/apiary marker titles, live GPS location pin, zoom & add controls).",
+                        "Full localization of the Hive Action Menu (Ventusky Weather, Photo Gallery, Inspection Logs, Relocate GPS, Details, Share Hash P2P).",
+                        "Full localization of the Apiary Complex Menu (Add Hive to Apiary, Relocate GPS, Edit Name, P2P SMS Share)."
+                    ),
+                    itemsFr = listOf(
+                        "Le changement dynamique de langue affecte le tiroir de navigation et tous les menus.",
+                        "Traduction complète de la carte principale, du menu des ruches et du menu des ruchers en 11 langues."
+                    ),
+                    itemsHu = listOf(
+                        "A dinamikus nyelvváltás mostantól érinti a navigációs menüt, a főtérképet és az összes menüt.",
+                        "A kaptár és méhészet menük teljes lokalizációja mind a 11 nyelven."
+                    ),
+                    itemsDe = listOf(
+                        "Dynamischer Sprachwechsel wirkt sich nun auf die Hauptnavigation, Karten und alle Menüs aus.",
+                        "Vollständige Lokalisierung des Bienenstock- und Imkerei-Menüs in 11 Sprachen."
+                    ),
+                    itemsUk = listOf(
+                        "Динамічне перемикання мови тепер впливає на бічне меню, головну карту та всі діалоги.",
+                        "Повна локалізація меню вуликів та пасік на всі 11 мов."
+                    ),
+                    itemsRu = listOf(
+                        "Динамическое переключение языка теперь влияет на боковое меню, главную карту и все диалоги.",
+                        "Полная локализация меню ульев и пасек на все 11 языков."
+                    ),
+                    itemsBg = listOf(
+                        "Динамичната промяна на езика засяга страничното меню, основната карта и всички диалози.",
+                        "Пълна локализация на менютата на кошерите и пчелините на 11 езика."
+                    ),
+                    itemsPt = listOf(
+                        "Mudar o idioma agora afeta o menu lateral, mapa principal e todos os menus.",
+                        "Localização completa dos menus de colmeia e apiário nos 11 idiomas."
+                    ),
+                    itemsIt = listOf(
+                        "Il cambio lingua influisce ora sul menu laterale, sulla mappa principale e su tutti i menu.",
+                        "Localizzazione completa dei menu arnia e apiario in 11 lingue."
+                    ),
+                    itemsEs = listOf(
+                        "El cambio de idioma ahora afecta al menú lateral, mapa principal y todos los menús.",
+                        "Localización completa de los menús de colmena y colmenar en los 11 idiomas."
+                    )
+                )
+            )
+        ),
         ChangelogEntry(
             version = "v0.6.0",
             dateRo = "06 Noi 2026",

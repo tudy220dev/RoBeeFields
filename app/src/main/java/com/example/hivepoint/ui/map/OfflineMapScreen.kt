@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.example.hivepoint.model.Beehive
 import com.example.hivepoint.model.HiveStatus
 import com.example.hivepoint.model.MapType
+import com.example.hivepoint.util.AppLocalization
 import com.example.hivepoint.util.MarkerIconHelper
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapEventsReceiver
@@ -90,6 +91,7 @@ fun OfflineMapScreen(
     userLocation: Pair<Double, Double>? = null,
     mapType: MapType = MapType.TOPOGRAPHIC,
     isDarkTheme: Boolean = false,
+    selectedLanguage: String = "Română",
     onHiveClick: (Beehive) -> Unit = {},
     onMapLongClick: (latitude: Double, longitude: Double) -> Unit = { _, _ -> }
 ) {
@@ -157,7 +159,7 @@ fun OfflineMapScreen(
                     val (userLat, userLon) = userLocation
                     val userMarker = Marker(map).apply {
                         position = GeoPoint(userLat, userLon)
-                        title = "Locația Mea Live (GPS)"
+                        title = AppLocalization.get(selectedLanguage, "Locația Mea Live (GPS)", "My Live Location (GPS)", "Ma Position en Direct (GPS)", "Élő Helyzetem (GPS)", "Mein Live-Standort (GPS)", "Моє розташування (GPS)", "Мое местоположение (GPS)", "Моето местоположение (GPS)", "Minha Localização Live (GPS)", "La Mia Posizione Live (GPS)", "Mi Ubicación en Vivo (GPS)")
                         snippet = "Lat: %.5f | Lon: %.5f".format(userLat, userLon)
                         icon = googleBlueDotDrawable
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
@@ -191,10 +193,14 @@ fun OfflineMapScreen(
                         MarkerIconHelper.createBeehiveMarkerDrawable(context, statusHex)
                     }
 
+                    val apiaryPrefix = AppLocalization.get(selectedLanguage, "Stupină", "Apiary", "Rucher", "Méhészet", "Imkerei", "Пасіка", "Пасека", "Пчелин", "Apiário", "Apiario", "Colmenar")
+                    val hivePrefix = AppLocalization.get(selectedLanguage, "Stup", "Hive", "Ruche", "Kaptár", "Bienenstock", "Вулик", "Улей", "Кошер", "Colmeia", "Arnia", "Colmena")
+                    val statusLabel = AppLocalization.get(selectedLanguage, "Status", "Status", "Statut", "Állapot", "Status", "Статус", "Статус", "Статус", "Status", "Stato", "Estado")
+
                     val hiveMarker = Marker(map).apply {
                         position = GeoPoint(lat, lon)
-                        title = if (isApiary) "Stupină: ${hive.hiveNumber}" else "Stup: ${hive.hiveNumber}"
-                        snippet = "Status: ${hive.status.toDisplayName("Română")} | Note: ${hive.notes}"
+                        title = if (isApiary) "$apiaryPrefix: ${hive.hiveNumber}" else "$hivePrefix: ${hive.hiveNumber}"
+                        snippet = "$statusLabel: ${hive.status.toDisplayName(selectedLanguage)} | Note: ${hive.notes}"
                         icon = markerDrawable
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                         setOnMarkerClickListener { _, _ ->
